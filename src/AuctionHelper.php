@@ -38,8 +38,6 @@ class AuctionHelper
             throw new Exception("Auction has not been created: " . print_r($resultVerify, 1));
         }
 
-        var_dump($resultNewAuction, $resultVerify);
-
         return $resultVerify->itemId;
     }
 

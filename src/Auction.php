@@ -15,83 +15,37 @@ class Auction
 
     const MAX_PHOTOS = 8;
 
-    protected $title = null;
-
-    protected $description = null;
-
-    protected $category = null;
-
-    protected $timespan = null;
-
-    protected $quantity = null;
-
-    protected $country = null;
-
-    protected $postcode = null;
-
-    protected $region = null;
-
-    protected $city = null;
-
-    protected $condition = null;
-
-    protected $saleFormat = null;
-
-    protected $buyNowPrice = null;
-
-    protected $shippingPaidBy = null;
-
-    protected $postPackagePriorityPrice = null;
-
     protected $localId = null;
+
+    protected $fields = [];
 
     protected $photos = [];
 
-    public function __construct(array $params)
-    {
-        $this->checkPhotosCount($params);
 
-        foreach ($params as $name => $value) {
-            if (property_exists($this, $name)) {
-                $this->{$name} = $value;
-            } else {
-                throw new Exception("Unknown property: {$name}");
-            }
-        }
+    public function __construct($localId, array $fields)
+    {
+        $this->localId = $localId;
+        $this->fields = $fields;
     }
 
-    protected function checkPhotosCount(array $params)
+    public function setPhotos(array $photos)
     {
-        if (!array_key_exists('photos', $params)) {
-            return;
-        }
-
-        $photosCount = count($params['photos']);
+        $photosCount = count($photos);
 
         if ($photosCount > self::MAX_PHOTOS) {
             throw new Exception("Photo files limit exceeded, " . self::MAX_PHOTOS . " allowed, " . $photosCount . " given");
         }
-    }
 
+        $this->photos = $photos;
+    }
 
     public function getApiRepresentation()
     {
-        $fields = [
-            (new Field(AuctionFids::FID_TITLE, $this->getTitle()))->toArray(),
-            (new Field(AuctionFids::FID_CATEGORY, $this->getCategory()))->toArray(),
-            (new Field(AuctionFids::FID_TIMESPAN, $this->getTimespan()))->toArray(),
-            (new Field(AuctionFids::FID_QUANTITY, $this->getQuantity()))->toArray(),
-            (new Field(AuctionFids::FID_COUNTRY, $this->getCountry()))->toArray(),
-            (new Field(AuctionFids::FID_REGION, $this->getRegion()))->toArray(),
-            (new Field(AuctionFids::FID_CITY, $this->getCity()))->toArray(),
-            (new Field(AuctionFids::FID_DESCRIPTION, $this->getDescription()))->toArray(),
-            (new Field(AuctionFids::FID_POSTCODE, $this->getPostcode()))->toArray(),
-            (new Field(AuctionFids::FID_CONDITION, $this->getCondition()))->toArray(),
-            (new Field(AuctionFids::FID_SALE_FORMAT, $this->getSaleFormat()))->toArray(),
-            (new Field(AuctionFids::FID_BUY_NOW_PRICE, $this->getBuyNowPrice()))->toArray(),
-            (new Field(AuctionFids::FID_SHIPPING_PAID_BY, $this->getShippingPaidBy()))->toArray(),
-            (new Field(AuctionFids::FID_POST_PACKAGE_PRIORITY_PRICE, $this->getPostPackagePriorityPrice()))->toArray(),
-        ];
+        $fields = [];
+
+        foreach($this->fields as $fid => $value) {
+            $fields[] = (new Field($fid, $value))->toArray();
+        }
 
         $this->addPhotoFields($fields);
 
@@ -111,7 +65,11 @@ class Auction
 
         $index = 0;
         foreach ($this->photos as $photo) {
-            $fields[] = new Field(AuctionFids::FID_PHOTO + $index, file_get_contents($photo), Field::VALUE_IMAGE);
+            if (!is_readable($photo)) {
+                throw new Exception("Photo file {$photo} is not readable");
+            }
+            
+            $fields[] = (new Field(AuctionFids::FID_PHOTO + $index, file_get_contents($photo), Field::VALUE_IMAGE))->toArray();
             $index++;
         }
     }
