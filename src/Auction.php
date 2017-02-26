@@ -35,15 +35,15 @@ class Auction
 
     protected $condition = null;
 
-    protected $sale_format = null;
+    protected $saleFormat = null;
 
-    protected $buy_now_price = null;
+    protected $buyNowPrice = null;
 
-    protected $shipping_paid_by = null;
+    protected $shippingPaidBy = null;
 
-    protected $post_package_priority_price = null;
+    protected $postPackagePriorityPrice = null;
 
-    protected $local_id = null;
+    protected $localId = null;
 
     protected $photos = [];
 
@@ -54,6 +54,8 @@ class Auction
         foreach ($params as $name => $value) {
             if (property_exists($this, $name)) {
                 $this->{$name} = $value;
+            } else {
+                throw new Exception("Unknown property: {$name}");
             }
         }
     }
@@ -69,35 +71,6 @@ class Auction
         if ($photosCount > self::MAX_PHOTOS) {
             throw new Exception("Photo files limit exceeded, " . self::MAX_PHOTOS . " allowed, " . $photosCount . " given");
         }
-    }
-
-
-    public function getSaleFormat()
-    {
-        return $this->sale_format;
-    }
-
-
-    public function getBuyNowPrice()
-    {
-        return $this->buy_now_price;
-    }
-
-
-    public function getShippingPaidBy()
-    {
-        return $this->shipping_paid_by;
-    }
-
-
-    public function getPostPackagePriorityPrice()
-    {
-        return $this->post_package_priority_price;
-    }
-
-    public function getLocalId()
-    {
-        return $this->local_id;
     }
 
 
@@ -147,7 +120,7 @@ class Auction
     public function __call($name, $args)
     {
         if (strpos($name, 'get') === 0) {
-            $property = mb_strtolower(substr($name, 3));
+            $property = lcfirst(substr($name, 3));
             if (property_exists($this, $property)) {
                 return $this->{$property};
             } else {

@@ -39,11 +39,11 @@ try {
         'city' => 'SomeCity',
         'postcode' => '12-345',
         'condition' => Auction::CONDITION_NEW,
-        'sale_format' => Auction::SALE_FORMAT_SHOP,
-        'buy_now_price' => 43.21,
-        'shipping_paid_by' => Auction::SHIPPING_PAID_BY_BUYER,
-        'post_package_priority_price' => 12.34,
-        'local_id' => 1,
+        'saleFormat' => Auction::SALE_FORMAT_SHOP,
+        'buyNowPrice' => 43.21,
+        'shippingPaidBy' => Auction::SHIPPING_PAID_BY_BUYER,
+        'postPackagePriorityPrice' => 12.34,
+        'localId' => 1,
     ]);
 
     $allegroItemId = $auctionHelper->newAuction($auction);
@@ -51,5 +51,5 @@ try {
     var_dump($allegroItemId);
 
 } catch (Exception $e) {
-    echo "Exception: {$e->getMessage()};\nFile: {$e->getFile()}; Line: {$e->getLine()}\n\n";
+    echo "Exception: {$e->getMessage()}\nFile: {$e->getFile()}; Line: {$e->getLine()}\n\n";
 }
