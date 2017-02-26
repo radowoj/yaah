@@ -1,0 +1,17 @@
+{
+    "name": "radowoj/yaah",
+    "description": "Yet Another Allegro Helper :)",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "radowoj",
+            "email": "radoslaw@wojtyczka.me"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Radowoj\\Yaah\\": "src"
+        }
+    }
+}
