@@ -3,36 +3,45 @@
 class Config
 {
     /**
-      * @var string Allegro WebAPI key
-      */
+     * Allegro WebAPI key
+     * @var string
+     */
     protected $apiKey = null;
 
     /**
-      * @var string Allegro login
-      */
+     * Allegro login
+     * @var string
+     */
     protected $login = null;
 
     /**
-      * @var string Allegro password hash (base64 of sha-256 of plaintext password)
-      */
+     * Allegro password hash (base64 of sha-256 of plaintext password)
+     * @var string
+     */
     protected $passwordHash = null;
 
     /**
-     * @var boolean Use sandbox or production
+     * Whether to use sandbox
+     * @var boolean
      */
     protected $isSandbox = null;
 
     /**
      * @var string country code required by WebAPI for certain operations
      */
+    /**
+     * [$countryCode description]
+     * @var [type]
+     */
     protected $countryCode = null;
 
     /**
-     * @var string plain text password
+     * Plain text password
      * Useful for those moments when sandbox refuses to work with hashed password
      * ("wrong username or password" exception despite using correct credentials).
      * It is not recommended to use it otherwise, always keep hashed, not plaintext
      * password in your config for safety reasons.
+     * @var string
      */
     protected $passwordPlain = null;
 
