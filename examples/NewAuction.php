@@ -12,15 +12,11 @@ use Radowoj\Yaah\Constants\AuctionFids;
 use Radowoj\Yaah\AuctionHelper;
 
 
-function loadConfig()
-{
-    return include('config.php');
-}
 
 try {
 
     $config = new Config(
-        loadConfig()
+        include('config.php')
     );
 
     $client = new Client(
@@ -54,7 +50,7 @@ try {
 
     $allegroItemId = $auctionHelper->newAuction($auction);
 
-    var_dump($allegroItemId);
+    echo "Created auction with itemId = {$allegroItemId}\n";
 
 } catch (Exception $e) {
     echo "Exception: {$e->getMessage()}\nFile: {$e->getFile()}; Line: {$e->getLine()}\n\n";
