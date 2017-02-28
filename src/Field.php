@@ -85,30 +85,64 @@ class Field
     {
         $this->fid = $fid;
 
+        //if value type was specified (useful for fvalueImage, fvalueDatetime etc.)
         if ($forceValueType) {
-            if (!property_exists($this, $forceValueType)) {
-                throw new Exception("Class " . get_class($this) . " does not have property: {$forceValueType}");
-            }
-
-            $this->{$forceValueType} = $value;
+            $this->setValueForced($forceValueType, $value);
             return;
         }
 
-        //if no forced value type is given, autodetect
-
-        //@TODO - date, range autodetection
-
+        //if no forced value type is given, autodetect it
         if (is_integer($value)) {
             $this->fvalueInt = $value;
         } elseif (is_float($value)) {
             $this->fvalueFloat = $value;
         } elseif (is_string($value)) {
-            $this->fvalueString = $value;
+            $this->setValueStringAutodetect($value);
+        } elseif (is_array($value) && count($value) == 2) {
+            $this->setValueRangeAutodetect($value);
         } else {
             throw new Exception('Not supported value type: ' . gettype($value) . "; fid={$fid}");
         }
+
     }
 
+
+    /**
+     * Detect type of string value (date or normal string)
+     * @param string $value value to detect type
+     */
+    protected function setValueStringAutodetect($value)
+    {
+        if (preg_match('/^\d{2}\-\d{2}\-\d{4}$/', $value)) {
+            $this->fvalueDate = $value;
+        } else {
+            $this->fvalueString = $value;
+        }
+    }
+
+    /**
+     * Detect type of range passed as argument (int, float, date)
+     * @param array $value value to detect type
+     */
+    protected function setValueRangeAutodetect(array $value)
+    {
+
+    }
+
+
+    protected function setValueForced($forceValueType, $value)
+    {
+        if (!property_exists($this, $forceValueType)) {
+            throw new Exception("Class " . get_class($this) . " does not have property: {$forceValueType}");
+        }
+
+        $this->{$forceValueType} = $value;
+    }
+
+    /**
+     * Returns WebAPI representation of Field
+     * @return array field
+     */
     public function toArray()
     {
         return [
@@ -124,7 +158,6 @@ class Field
             'fvalueRangeDate' => $this->fvalueRangeDate,
         ];
     }
-
 
 
 }
