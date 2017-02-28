@@ -1,6 +1,10 @@
-<?php namespace Radowoj\Yaah;
+<?php
 
+namespace Radowoj\Yaah;
+
+use stdClass;
 use SoapClient;
+use Radowoj\Yaah\Constants\Sysvars;
 
 class Client
 {
@@ -30,37 +34,21 @@ class Client
         $this->login();
     }
 
+
     protected function getLocalVersionKey()
     {
         if (is_null($this->localVersionKey)) {
-            $response = $this->soapClient->doQueryAllSysStatus([
+            $response = $this->soapClient->doQuerySysStatus([
+                'sysvar' => Sysvars::SYSVAR_CATEGORY_TREE,
                 'countryId' => $this->config->getCountryCode(),
                 'webapiKey' => $this->config->getApiKey(),
             ]);
 
-            if (!is_object($response) || !isset($response->sysCountryStatus) || !isset($response->sysCountryStatus->item)) {
-                throw new Exception("Invalid WebAPI doQueryAllSysStatus() response: " . print_r($response, 1));
+            if (!isset($response->verKey)) {
+                throw new Exception("Invalid WebAPI doQuerySysStatus() response: " . print_r($response, 1));
             }
 
-            $responseFiltered = array_filter($response->sysCountryStatus->item, function ($item) {
-                return ($item->countryId == $this->config->getCountryCode());
-            });
-
-            if (count($responseFiltered) === 0) {
-                throw new Exception("Country with id {$this->config->getCountryCode()} not found in doQueryAllSysStatus() response");
-            }
-
-            if (count($responseFiltered) > 1) {
-                throw new Exception("Country id {$this->config->getCountryCode()} is ambiguous; multiple matching countries foundin doQueryAllSysStatus() response");
-            }
-
-            $responseFiltered = array_shift($responseFiltered);
-
-            if (!is_object($responseFiltered) || !isset($responseFiltered->verKey)) {
-                throw new Exception("Invalid WebAPI doQueryAllSysStatus() response; filtered country object: " . print_r($responseFiltered, 1));
-            }
-
-            $this->localVersionKey = $responseFiltered->verKey;
+            $this->localVersionKey = $response->verKey;
         }
 
         return $this->localVersionKey;

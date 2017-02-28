@@ -1,4 +1,6 @@
-<?php namespace Radowoj\Yaah;
+<?php
+
+namespace Radowoj\Yaah;
 
 class Config
 {

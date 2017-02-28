@@ -1,4 +1,6 @@
-<?php namespace Radowoj\Yaah\Constants;
+<?php
+
+namespace Radowoj\Yaah\Constants;
 
 class AuctionFids
 {

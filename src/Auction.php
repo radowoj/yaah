@@ -1,4 +1,6 @@
-<?php namespace Radowoj\Yaah;
+<?php
+
+namespace Radowoj\Yaah;
 
 use Radowoj\Yaah\Constants\AuctionFids;
 
@@ -68,7 +70,7 @@ class Auction
             if (!is_readable($photo)) {
                 throw new Exception("Photo file {$photo} is not readable");
             }
-            
+
             $fields[] = (new Field(AuctionFids::FID_PHOTO + $index, file_get_contents($photo), Field::VALUE_IMAGE))->toArray();
             $index++;
         }
