@@ -83,6 +83,9 @@ class Field
      */
     public function __construct($fid, $value = null, $forceValueType = '')
     {
+        if (!is_integer($fid)) {
+            throw new Exception('fid must be an integer, ' . gettype($fid) . ' given');
+        }
         $this->fid = $fid;
 
         //if value type was specified (useful for fvalueImage, fvalueDatetime etc.)
@@ -107,7 +110,7 @@ class Field
         } elseif (is_array($value)) {
             $this->setValueRangeAutodetect($value);
         } else {
-            throw new Exception('Not supported value type: ' . gettype($value) . "; fid={$fid}");
+            throw new Exception('Not supported value type: ' . gettype($value) . "; fid={$this->fid}");
         }
     }
 
