@@ -92,18 +92,23 @@ class Field
         }
 
         //if no forced value type is given, autodetect it
+        $this->setValueAutodetect($value);
+    }
+
+
+    protected function setValueAutodetect($value)
+    {
         if (is_integer($value)) {
             $this->fvalueInt = $value;
         } elseif (is_float($value)) {
             $this->fvalueFloat = $value;
         } elseif (is_string($value)) {
             $this->setValueStringAutodetect($value);
-        } elseif (is_array($value) && count($value) == 2) {
+        } elseif (is_array($value)) {
             $this->setValueRangeAutodetect($value);
         } else {
             throw new Exception('Not supported value type: ' . gettype($value) . "; fid={$fid}");
         }
-
     }
 
 
@@ -126,7 +131,9 @@ class Field
      */
     protected function setValueRangeAutodetect(array $value)
     {
-
+        if (count($value) !== 2) {
+            throw new Exception('Range array must have exactly 2 elements');
+        }
     }
 
 
