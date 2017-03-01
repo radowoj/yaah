@@ -18,6 +18,7 @@ class FieldTest extends TestCase
 
     /**
      * Tests that output of Field->toArray() has the exact keys expected by WebAPI
+     * @return void
      */
     public function testReturnedArray()
     {
@@ -45,6 +46,40 @@ class FieldTest extends TestCase
             ],
 
         ], $field->toArray());
+    }
+
+    /**
+     * Tests integer value representation
+     * @return void
+     */
+    public function testIntegerValue()
+    {
+        $int = 10;
+        $array = (new Field(1, $int))->toArray();
+        $this->assertArrayHasKey('fvalueInt', $array);
+        $this->assertSame($array['fvalueInt'], $int);
+    }
+
+
+    /**
+     * Tests float value representation
+     * @return void
+     */
+    public function testFloatValue()
+    {
+        $float = 13.5;
+        $array = (new Field(1, $float))->toArray();
+        $this->assertArrayHasKey('fvalueFloat', $array);
+        $this->assertSame($array['fvalueFloat'], $float);
+    }
+
+
+    public function testDateValue()
+    {
+        $date = '01-03-2017';
+        $array = (new Field(1, $date))->toArray();
+        $this->assertArrayHasKey('fvalueDate', $array);
+        $this->assertSame($array['fvalueDate'], $date);
 
     }
 }
