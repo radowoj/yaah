@@ -40,7 +40,7 @@ class AuctionHelper
      * @throws Radowoj\Yaah\Exception on failure
      *
      * @param  Radowoj\Yaah\Auction $auction Auction to create
-     * @return $itemId - id of created
+     * @return integer id of created auction
      */
     public function newAuction(Auction $auction)
     {
@@ -123,7 +123,7 @@ class AuctionHelper
      * @TODO - this should return an Auction representation
      *
      * @param  integer $itemId id of auction to get
-     * @return array 
+     * @return array
      */
     public function getAuctionByItemId($itemId)
     {
