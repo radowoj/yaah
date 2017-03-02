@@ -8,9 +8,6 @@ use Radowoj\Yaah\Constants\Sysvars;
 
 class Client
 {
-    const WSDL_PRODUCTION = 'https://webapi.allegro.pl/service.php?wsdl';
-    const WSDL_SANDBOX = 'https://webapi.allegro.pl.webapisandbox.pl/service.php?wsdl';
-
     protected $config = null;
 
     protected $soapClient = null;
@@ -21,16 +18,10 @@ class Client
 
     protected $localVersionKey = null;
 
-    public function __construct(Config $config)
+    public function __construct(Config $config, SoapClient $soapClient)
     {
         $this->config = $config;
-
-        $this->soapClient = new SoapClient(
-            $config->getIsSandbox()
-                ? self::WSDL_SANDBOX
-                : self::WSDL_PRODUCTION
-        );
-
+        $this->soapClient = $soapClient;
         $this->login();
     }
 

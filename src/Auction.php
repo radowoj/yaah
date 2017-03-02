@@ -6,15 +6,6 @@ use Radowoj\Yaah\Constants\AuctionFids;
 
 class Auction
 {
-    const CONDITION_NEW = 1;
-    const CONDITION_USED = 2;
-
-    const SHIPPING_PAID_BY_SELLER = 0;
-    const SHIPPING_PAID_BY_BUYER = 1;
-
-    const SALE_FORMAT_NON_SHOP = 0;
-    const SALE_FORMAT_SHOP = 1;
-
     const MAX_PHOTOS = 8;
 
     protected $localId = null;
@@ -22,7 +13,6 @@ class Auction
     protected $fields = [];
 
     protected $photos = [];
-
 
     public function __construct($localId, array $fields)
     {
@@ -77,16 +67,9 @@ class Auction
     }
 
 
-    public function __call($name, $args)
+    public function getLocalId()
     {
-        if (strpos($name, 'get') === 0) {
-            $property = lcfirst(substr($name, 3));
-            if (property_exists($this, $property)) {
-                return $this->{$property};
-            } else {
-                throw new Exception('Unknown auction property: ' . $property);
-            }
-        }
+        return $this->localId;
     }
 
 
