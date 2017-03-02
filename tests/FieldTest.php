@@ -29,7 +29,7 @@ class FieldTest extends TestCase
             'fvalueString' => 'some string',
             'fvalueInt' => 0,
             'fvalueFloat' => 0,
-            'fvalueImage' => 0,
+            'fvalueImage' => '',
             'fvalueDatetime' => 0,
             'fvalueDate' => '',
             'fvalueRangeInt' => [

@@ -8,17 +8,15 @@ class Auction
 {
     const MAX_PHOTOS = 8;
 
-    protected $localId = null;
-
     protected $fields = [];
 
     protected $photos = [];
 
-    public function __construct($localId, array $fields)
+    public function __construct(array $fields = [])
     {
-        $this->localId = $localId;
         $this->fields = $fields;
     }
+
 
     public function setPhotos(array $photos)
     {
@@ -31,7 +29,8 @@ class Auction
         $this->photos = $photos;
     }
 
-    public function getApiRepresentation()
+
+    public function toApiRepresentation()
     {
         $fields = [];
 
@@ -43,8 +42,20 @@ class Auction
 
         return [
             'fields' => $fields,
-            'localId' => $this->getLocalId(),
         ];
+    }
+
+
+    public function fromApiRepresentation(array $fields)
+    {
+        $this->fields = [];
+        $this->photos = [];
+
+        foreach($fields as $apiField) {
+            $field = new Field(0, '');
+            $field->fromArray((array)$apiField);
+            $this->fields[$field->getFid()] = $field->getValue();
+        }
     }
 
 
@@ -65,12 +76,5 @@ class Auction
             $index++;
         }
     }
-
-
-    public function getLocalId()
-    {
-        return $this->localId;
-    }
-
 
 }

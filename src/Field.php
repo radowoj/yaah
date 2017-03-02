@@ -2,9 +2,19 @@
 
 namespace Radowoj\Yaah;
 
+/**
+ * Class representation of WebAPI auction field
+ */
 class Field
 {
     const VALUE_IMAGE = 'fvalueImage';
+
+    const DEFAULT_STRING = '';
+    const DEFAULT_INT = 0;
+    const DEFAULT_FLOAT = 0;
+    const DEFAULT_IMAGE = '';
+    const DEFAULT_DATETIME = 0;
+    const DEFAULT_DATE = '';
 
     /**
      * Allegro WebAPI fid
@@ -16,46 +26,46 @@ class Field
      * String value of given field
      * @var string
      */
-    protected $fvalueString = '';
+    protected $fvalueString = self::DEFAULT_STRING;
 
     /**
      * Integer value of given field
      * @var integer
      */
-    protected $fvalueInt = 0;
+    protected $fvalueInt = self::DEFAULT_INT;
 
 
     /**
      * Float value of given field
      * @var float
      */
-    protected $fvalueFloat = 0;
+    protected $fvalueFloat = self::DEFAULT_FLOAT;
 
     /**
      * Image (image file content)
      * @var mixed
      */
-    protected $fvalueImage = 0;
+    protected $fvalueImage = self::DEFAULT_IMAGE;
 
     /**
      * Unix time
      * @var float
      */
-    protected $fvalueDatetime = 0;
+    protected $fvalueDatetime = self::DEFAULT_DATETIME;
 
     /**
      * Date (dd-mm-yyyy)
      * @var string
      */
-    protected $fvalueDate = '';
+    protected $fvalueDate = self::DEFAULT_DATE;
 
     /**
      * Integer range
      * @var array
      */
     protected $fvalueRangeInt = [
-        'fvalueRangeIntMin' => 0,
-        'fvalueRangeIntMax' => 0,
+        'fvalueRangeIntMin' => self::DEFAULT_INT,
+        'fvalueRangeIntMax' => self::DEFAULT_INT,
     ];
 
     /**
@@ -63,8 +73,8 @@ class Field
      * @var array
      */
     protected $fvalueRangeFloat = [
-        'fvalueRangeFloatMin' => 0,
-        'fvalueRangeFloatMax' => 0,
+        'fvalueRangeFloatMin' => self::DEFAULT_FLOAT,
+        'fvalueRangeFloatMax' => self::DEFAULT_FLOAT,
     ];
 
     /**
@@ -72,8 +82,8 @@ class Field
      * @var array
      */
     protected $fvalueRangeDate = [
-        'fvalueRangeDateMin' => '',
-        'fvalueRangeDateMax' => '',
+        'fvalueRangeDateMin' => self::DEFAULT_DATE,
+        'fvalueRangeDateMax' => self::DEFAULT_DATE,
     ];
 
     /**
@@ -149,6 +159,7 @@ class Field
         $this->{$forceValueType} = $value;
     }
 
+
     /**
      * Returns WebAPI representation of Field
      * @return array field
@@ -169,5 +180,64 @@ class Field
         ];
     }
 
+
+    /**
+     * Creates object from WebAPI representation of Field
+     */
+    public function fromArray(array $array)
+    {
+        //recursive object to array :)
+        $array = json_decode(json_encode($array), true);
+
+        foreach($array as $key => $value) {
+            if (!property_exists($this, $key)) {
+                throw new Exception("Unknown Field property: {$key}");
+            }
+            $this->{$key} = $value;
+        }
+    }
+
+
+    public function getFid()
+    {
+        return $this->fid;
+    }
+
+
+    /**
+     * Return first property that is different from its default value
+     * @return mixed | null
+     */
+    public function getValue()
+    {
+        if ($this->fvalueString !== self::DEFAULT_STRING) {
+            return $this->fvalueString;
+        }
+
+        if ($this->fvalueInt !== self::DEFAULT_INT) {
+            return $this->fvalueInt;
+        }
+
+        if ($this->fvalueFloat !== self::DEFAULT_FLOAT) {
+            return $this->fvalueFloat;
+        }
+
+        if ($this->fvalueImage !== self::DEFAULT_IMAGE) {
+            return base64_decode($this->fvalueImage);
+        }
+
+        if ($this->fvalueDatetime !== self::DEFAULT_DATETIME) {
+            return $this->fvalueDatetime;
+        }
+
+        if ($this->fvalueDate !== self::DEFAULT_DATE) {
+            return $this->fvalueDate;
+        }
+
+        //@TODO ranges
+
+        //no clue what value type it was, all are defaults, so let's return null
+        return null;
+    }
 
 }

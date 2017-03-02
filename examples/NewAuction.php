@@ -34,9 +34,7 @@ try {
 
     $auctionHelper = new AuctionHelper($client);
 
-    $localId = 1;
-
-    $auction = new Auction($localId, [
+    $auction = new Auction([
         AuctionFids::FID_TITLE => 'Allegro test auction',
         AuctionFids::FID_DESCRIPTION => 'Test auction description',
         AuctionFids::FID_CATEGORY => 6092,
@@ -57,7 +55,9 @@ try {
         //array of (no more than 8) paths to photo files
     ]);
 
-    $allegroItemId = $auctionHelper->newAuction($auction);
+    $localId = 1;
+
+    $allegroItemId = $auctionHelper->newAuction($auction, $localId);
 
     echo "Created auction with itemId = {$allegroItemId}\n";
 

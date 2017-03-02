@@ -40,12 +40,16 @@ class AuctionHelper
      * @throws Radowoj\Yaah\Exception on failure
      *
      * @param  Radowoj\Yaah\Auction $auction Auction to create
+     * @param integer $localId - local item id, required by WebAPI
      * @return integer id of created auction
      */
-    public function newAuction(Auction $auction)
+    public function newAuction(Auction $auction, $localId)
     {
-        $resultNewAuction = $this->client->newAuctionExt($auction->getApiRepresentation());
-        $resultVerify = $this->client->verifyItem(['localId' => $auction->getLocalId()]);
+        $auctionArray = $auction->toApiRepresentation();
+        $auctionArray['localId'] = $localId;
+
+        $resultNewAuction = $this->client->newAuctionExt($auctionArray);
+        $resultVerify = $this->client->verifyItem(['localId' => $localId]);
 
         if (!is_object($resultVerify) || !isset($resultVerify->itemId)) {
             throw new Exception("Auction has not been created: " . print_r($resultVerify, 1));
@@ -120,14 +124,19 @@ class AuctionHelper
 
 
     /**
-     * @TODO - this should return an Auction representation
-     *
      * @param  integer $itemId id of auction to get
-     * @return array
+     * @return Radowoj\Yaah\Auction | null
      */
     public function getAuctionByItemId($itemId)
     {
-        return $this->client->getItemFields(['itemId' => $itemId]);
+        $response =  $this->client->getItemFields(['itemId' => $itemId]);
+        if (isset($response->itemFields->item)) {
+            $auction = new Auction();
+            $auction->fromApiRepresentation($response->itemFields->item);
+            return $auction;
+        }
+
+        return null;
     }
 
 
