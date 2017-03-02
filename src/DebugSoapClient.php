@@ -12,7 +12,7 @@ class DebugSoapClient extends SoapClient
 {
     /**
      * Log file (or stream) to use for logging SOAP requests/responses
-     * @var string
+     * @var resource
      */
     protected $logFile = null;
 
@@ -26,7 +26,7 @@ class DebugSoapClient extends SoapClient
 
         $options['trace'] = 1;
 
-        return parent::__construct($wsdl, $options);
+        parent::__construct($wsdl, $options);
     }
 
 
