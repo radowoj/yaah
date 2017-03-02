@@ -48,6 +48,17 @@ class FieldTest extends TestCase
         ], $field->toArray());
     }
 
+
+    public function testStringValue()
+    {
+        $string = 'lorem ipsum';
+        $field = new Field(1, $string);
+        $this->assertArrayHasKey('fvalueString', $field->toArray());
+        $this->assertSame($field->toArray()['fvalueString'], $string);
+        $this->assertSame($field->getValue(), $string);
+
+    }
+
     /**
      * Tests integer value representation
      * @return void
@@ -55,9 +66,10 @@ class FieldTest extends TestCase
     public function testIntegerValue()
     {
         $int = 10;
-        $array = (new Field(1, $int))->toArray();
-        $this->assertArrayHasKey('fvalueInt', $array);
-        $this->assertSame($array['fvalueInt'], $int);
+        $field = new Field(1, $int);
+        $this->assertArrayHasKey('fvalueInt', $field->toArray());
+        $this->assertSame($field->toArray()['fvalueInt'], $int);
+        $this->assertSame($field->getValue(), $int);
     }
 
 
@@ -68,18 +80,68 @@ class FieldTest extends TestCase
     public function testFloatValue()
     {
         $float = 13.5;
-        $array = (new Field(1, $float))->toArray();
-        $this->assertArrayHasKey('fvalueFloat', $array);
-        $this->assertSame($array['fvalueFloat'], $float);
+        $field = new Field(1, $float);
+        $this->assertArrayHasKey('fvalueFloat', $field->toArray());
+        $this->assertSame($field->toArray()['fvalueFloat'], $float);
+        $this->assertSame($field->getValue(), $float);
     }
 
 
+    /**
+     * Tests date value representation
+     * @return void
+     */
     public function testDateValue()
     {
         $date = '01-03-2017';
-        $array = (new Field(1, $date))->toArray();
-        $this->assertArrayHasKey('fvalueDate', $array);
-        $this->assertSame($array['fvalueDate'], $date);
-
+        $field = new Field(1, $date);
+        $this->assertArrayHasKey('fvalueDate', $field->toArray());
+        $this->assertSame($field->toArray()['fvalueDate'], $date);
+        $this->assertSame($field->getValue(), $date);
     }
+
+
+    /**
+     * Test forced value type - datetime
+     * @return void
+     */
+    public function testDatetimeValue()
+    {
+        $datetime = time();
+        $field = new Field(1, $datetime, 'fvalueDatetime');
+        $this->assertArrayHasKey('fvalueDatetime', $field->toArray());
+        $this->assertSame($field->toArray()['fvalueDatetime'], $datetime);
+        $this->assertSame($field->getValue(), $datetime);
+    }
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Not supported value type: object; fid=1
+     */
+    public function testExceptionOnInvalidValue()
+    {
+        $field = new Field(1, (object)['foo' => 'bar']);
+    }
+
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Class Radowoj\Yaah\Field does not have property: fvalueUnicorn
+     */
+    public function testExceptionOnInvalidForcedValue()
+    {
+        $field = new Field(1, 'something', 'fvalueUnicorn');
+    }
+
+
+    /**
+     * Test fid value
+     * @return void
+     */
+    public function testFid()
+    {
+        $field = new Field(42, 'don\'t panic!');
+        $this->assertSame($field->getFid(), 42);
+    }
+
 }
