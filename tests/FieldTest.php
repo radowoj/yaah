@@ -5,14 +5,13 @@ use Radowoj\Yaah\Field;
 
 class FieldTest extends TestCase
 {
-
     /**
      * @expectedException Radowoj\Yaah\Exception
      * @expectedExceptionMessage fid must be an integer
      */
     public function testNonIntegerFid()
     {
-        $field = new Field('some string');
+        new Field('some string');
     }
 
 
@@ -49,55 +48,27 @@ class FieldTest extends TestCase
     }
 
 
-    public function testStringValue()
+    public function valueTypesProvider()
     {
-        $string = 'lorem ipsum';
-        $field = new Field(1, $string);
-        $this->assertArrayHasKey('fvalueString', $field->toArray());
-        $this->assertSame($field->toArray()['fvalueString'], $string);
-        $this->assertSame($field->getValue(), $string);
-
-    }
-
-    /**
-     * Tests integer value representation
-     * @return void
-     */
-    public function testIntegerValue()
-    {
-        $int = 10;
-        $field = new Field(1, $int);
-        $this->assertArrayHasKey('fvalueInt', $field->toArray());
-        $this->assertSame($field->toArray()['fvalueInt'], $int);
-        $this->assertSame($field->getValue(), $int);
+        return [
+            'string' => ['some string', 'fvalueString'],
+            'integer' => [42, 'fvalueInt'],
+            'float' => [13.5, 'fvalueFloat'],
+            'date' => ['01-03-2017', 'fvalueDate'],
+        ];
     }
 
 
     /**
-     * Tests float value representation
-     * @return void
+     * Test if various value types are properly handled
+     * @dataProvider valueTypesProvider
      */
-    public function testFloatValue()
+    public function testValueTypes($testValue, $arrayKey)
     {
-        $float = 13.5;
-        $field = new Field(1, $float);
-        $this->assertArrayHasKey('fvalueFloat', $field->toArray());
-        $this->assertSame($field->toArray()['fvalueFloat'], $float);
-        $this->assertSame($field->getValue(), $float);
-    }
-
-
-    /**
-     * Tests date value representation
-     * @return void
-     */
-    public function testDateValue()
-    {
-        $date = '01-03-2017';
-        $field = new Field(1, $date);
-        $this->assertArrayHasKey('fvalueDate', $field->toArray());
-        $this->assertSame($field->toArray()['fvalueDate'], $date);
-        $this->assertSame($field->getValue(), $date);
+        $field = new Field(1, $testValue);
+        $this->assertArrayHasKey($arrayKey, $field->toArray());
+        $this->assertSame($field->toArray()[$arrayKey], $testValue);
+        $this->assertSame($field->getValue(), $testValue);
     }
 
 
