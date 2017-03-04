@@ -7,7 +7,16 @@ namespace Radowoj\Yaah;
  */
 class Field
 {
+    const VALUE_STRING = 'fvalueString';
+    const VALUE_INTEGER = 'fvalueInt';
+    const VALUE_FLOAT = 'fvalueFloat';
     const VALUE_IMAGE = 'fvalueImage';
+    const VALUE_DATETIME = 'fvalueDatetime';
+    const VALUE_DATE = 'fvalueDate';
+    const VALUE_RANGE_INT = 'fvalueRangeInt';
+    const VALUE_RANGE_FLOAT = 'fvalueRangeFloat';
+    const VALUE_RANGE_DATE = 'fvalueRangeDate';
+
 
     const DEFAULT_STRING = '';
     const DEFAULT_INT = 0;
@@ -142,12 +151,54 @@ class Field
      * Detect type of range passed as argument (int, float, date)
      * @param array $value value to detect type
      */
-    protected function setValueRangeAutodetect(array $value)
+    protected function setValueRangeAutodetect(array $range)
     {
-        if (count($value) !== 2) {
+        if (count($range) !== 2) {
             throw new Exception('Range array must have exactly 2 elements');
         }
+
+        //make sure array has numeric keys
+        $range = array_values($range);
+
+        asort($range);
+
+        if ($this->isRangeFloat($range)) {
+            $this->fvalueRangeFloat = array_combine(
+                ['fvalueRangeFloatMin', 'fvalueRangeFloatMax'],
+                $range
+            );
+        } elseif($this->isRangeInt($range)) {
+            $this->fvalueRangeInt = array_combine(
+                ['fvalueRangeIntMin', 'fvalueRangeIntMax'],
+                $range
+            );
+        }
     }
+
+
+    /**
+     * Checks if given range is float
+     * @param  array   $range range to check
+     * @return boolean
+     */
+    protected function isRangeFloat(array $range)
+    {
+        $floats = array_filter($range, 'is_float');
+        return (count($floats) == 2);
+    }
+
+
+    /**
+     * Checks if given range is int
+     * @param  array   $range range to check
+     * @return boolean
+     */
+    protected function isRangeInt(array $range)
+    {
+        $ints = array_filter($range, 'is_int');
+        return (count($ints) == 2);
+    }
+
 
 
     protected function setValueForced($forceValueType, $value)
@@ -193,6 +244,7 @@ class Field
             if (!property_exists($this, $key)) {
                 throw new Exception("Unknown Field property: {$key}");
             }
+
             $this->{$key} = $value;
         }
     }
@@ -234,10 +286,33 @@ class Field
             return $this->fvalueDate;
         }
 
-        //@TODO ranges
+        $rangeValue = $this->getRangeValue();
+        if (!is_null($rangeValue)) {
+            return $rangeValue;
+        }
 
-        //no clue what value type it was, all are defaults, so let's return null
+        //if all values are at defaults, we're unable to determine
+        //which one was set without additional business logic involving
+        //fids - especially if the defaults come from WebAPI (fromArray())
         return null;
     }
+
+
+    protected function getRangeValue()
+    {
+        $rangeFloat = array_values($this->fvalueRangeFloat);
+        if ($rangeFloat !== array_fill(0, 2, self::DEFAULT_FLOAT)) {
+            return $rangeFloat;
+        }
+
+        $rangeInt = array_values($this->fvalueRangeInt);
+        if ($rangeInt !== array_fill(0, 2, self::DEFAULT_INT)) {
+            return $rangeInt;
+        }
+
+        //@TODO date ranges
+        return null;
+    }
+
 
 }

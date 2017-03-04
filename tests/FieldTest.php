@@ -51,10 +51,23 @@ class FieldTest extends TestCase
     public function valueTypesProvider()
     {
         return [
-            'string' => ['some string', 'fvalueString'],
-            'integer' => [42, 'fvalueInt'],
-            'float' => [13.5, 'fvalueFloat'],
-            'date' => ['01-03-2017', 'fvalueDate'],
+            'string' => [
+                'some string',
+                'fvalueString'
+            ],
+            'integer' => [
+                42,
+                'fvalueInt'
+            ],
+            'float' => [
+                13.5,
+                'fvalueFloat'
+            ],
+            'date' => [
+                '01-03-2017',
+                'fvalueDate'
+            ],
+
         ];
     }
 
@@ -69,6 +82,57 @@ class FieldTest extends TestCase
         $this->assertArrayHasKey($arrayKey, $field->toArray());
         $this->assertSame($field->toArray()[$arrayKey], $testValue);
         $this->assertSame($field->getValue(), $testValue);
+    }
+
+
+
+    public function rangeValueTypesProvider()
+    {
+        return [
+            'range float' => [
+                [10.5, 13.5],
+                'fvalueRangeFloat'
+            ],
+            'range int-int' => [
+                [10, 11],
+                'fvalueRangeInt'
+            ],
+            //@TODO
+            // 'date range' => [
+            //     ['01-03-2017', '03-03-2017'],
+            //     'fvalueRangeDate'
+            // ]
+        ];
+    }
+
+
+    /**
+     * Test if various value types are properly handled
+     * @dataProvider rangeValueTypesProvider
+     */
+    public function testRangeValues($testRange, $rangeKey)
+    {
+        $expectedArrayKeys = [
+            "{$rangeKey}Min",
+            "{$rangeKey}Max"
+        ];
+
+        $field = new Field(2, $testRange);
+        $this->assertArrayHasKey(
+            $rangeKey,
+            $field->toArray(),
+            'key doesn\'t exist in array representation'
+        );
+        $this->assertSame(
+            $field->toArray()[$rangeKey],
+            array_combine($expectedArrayKeys, $testRange),
+            'array representation contains wrong value'
+        );
+        $this->assertSame(
+            $field->getValue(),
+            $testRange,
+            'getValue() returns wrong value'
+        );
     }
 
 
