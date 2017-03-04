@@ -34,7 +34,7 @@ class Auction
     {
         $fields = [];
 
-        foreach($this->fields as $fid => $value) {
+        foreach ($this->fields as $fid => $value) {
             $fields[] = (new Field($fid, $value))->toArray();
         }
 
@@ -51,7 +51,7 @@ class Auction
         $this->fields = [];
         $this->photos = [];
 
-        foreach($fields as $apiField) {
+        foreach ($fields as $apiField) {
             $field = new Field(0, '');
             $field->fromArray((array)$apiField);
             $this->fields[$field->getFid()] = $field->getValue();

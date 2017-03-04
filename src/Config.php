@@ -52,7 +52,7 @@ class Config
     {
         $requiredParams = ['apiKey', 'login', 'passwordHash', 'isSandbox', 'countryCode'];
 
-        foreach($requiredParams as $property) {
+        foreach ($requiredParams as $property) {
             if (!array_key_exists($property, $params)) {
                 throw new Exception("{$property} is required in params array");
             }

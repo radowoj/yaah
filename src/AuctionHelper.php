@@ -37,9 +37,9 @@ class AuctionHelper
     /**
      * Create new auction
      *
-     * @throws Radowoj\Yaah\Exception on failure
+     * @throws Exception on failure
      *
-     * @param  Radowoj\Yaah\Auction $auction Auction to create
+     * @param  Auction $auction Auction to create
      * @param integer $localId - local item id, required by WebAPI
      * @return integer id of created auction
      */
@@ -125,7 +125,7 @@ class AuctionHelper
 
     /**
      * @param  integer $itemId id of auction to get
-     * @return Radowoj\Yaah\Auction | null
+     * @return Auction | null
      */
     public function getAuctionByItemId($itemId)
     {

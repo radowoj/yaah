@@ -30,6 +30,11 @@ class Field
      */
     protected $fid = null;
 
+
+    /**
+     * array of fValues of this Field
+     * @var array
+     */
     protected $fValues = [];
 
 
@@ -57,6 +62,7 @@ class Field
         //if no forced value type is given, autodetect it
         $this->setValueAutodetect($value);
     }
+
 
     /**
      * Default values, "empty" WebAPI fields item
@@ -87,6 +93,10 @@ class Field
     }
 
 
+    /**
+     * Set fid of this Field
+     * @param integer $fid
+     */
     public function setFid($fid)
     {
         if (!is_integer($fid)) {
@@ -96,6 +106,10 @@ class Field
     }
 
 
+    /**
+     * Set value to fValue index of corresponding type
+     * @param mixed $value
+     */
     protected function setValueAutodetect($value)
     {
         if (is_integer($value)) {
@@ -125,9 +139,10 @@ class Field
         }
     }
 
+
     /**
      * Detect type of range passed as argument (int, float, date)
-     * @param array $value value to detect type
+     * @param array $value value to detect type of
      */
     protected function setValueRangeAutodetect(array $range)
     {
@@ -145,7 +160,7 @@ class Field
                 ['fvalueRangeFloatMin', 'fvalueRangeFloatMax'],
                 $range
             );
-        } elseif($this->isRangeInt($range)) {
+        } elseif ($this->isRangeInt($range)) {
             $this->fValues[self::VALUE_RANGE_INT] = array_combine(
                 ['fvalueRangeIntMin', 'fvalueRangeIntMax'],
                 $range
@@ -178,6 +193,11 @@ class Field
     }
 
 
+    /**
+     * Set value of arbitrary type
+     * @param string $forceValueType type ('fvalueString', 'fvalueInt', ...)
+     * @param mixed $value to set
+     */
     protected function setValueForced($forceValueType, $value)
     {
         if (!array_key_exists($forceValueType, $this->fValues)) {
@@ -214,7 +234,7 @@ class Field
         $this->setFid($array['fid']);
         unset($array['fid']);
 
-        foreach($array as $key => $value) {
+        foreach ($array as $key => $value) {
             if (!array_key_exists($key, $this->fValues)) {
                 throw new Exception("Unknown Field property: {$key}");
             }
@@ -223,7 +243,10 @@ class Field
         }
     }
 
-
+    /**
+     * Return field fid
+     * @return integer
+     */
     public function getFid()
     {
         return $this->fid;
@@ -237,7 +260,7 @@ class Field
     public function getValue()
     {
         $defaults = $this->getDefaults();
-        foreach($this->fValues as $key => $fValue) {
+        foreach ($this->fValues as $key => $fValue) {
             if ($fValue !== $defaults[$key]) {
                 return is_array($fValue) ? array_values($fValue) : $fValue;
             }
