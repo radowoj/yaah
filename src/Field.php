@@ -8,7 +8,7 @@ namespace Radowoj\Yaah;
 class Field
 {
     const VALUE_STRING = 'fvalueString';
-    const VALUE_INTEGER = 'fvalueInt';
+    const VALUE_INT = 'fvalueInt';
     const VALUE_FLOAT = 'fvalueFloat';
     const VALUE_IMAGE = 'fvalueImage';
     const VALUE_DATETIME = 'fvalueDatetime';
@@ -16,7 +16,6 @@ class Field
     const VALUE_RANGE_INT = 'fvalueRangeInt';
     const VALUE_RANGE_FLOAT = 'fvalueRangeFloat';
     const VALUE_RANGE_DATE = 'fvalueRangeDate';
-
 
     const DEFAULT_STRING = '';
     const DEFAULT_INT = 0;
@@ -31,81 +30,23 @@ class Field
      */
     protected $fid = null;
 
-    /**
-     * String value of given field
-     * @var string
-     */
-    protected $fvalueString = self::DEFAULT_STRING;
+    protected $fValues = [];
 
-    /**
-     * Integer value of given field
-     * @var integer
-     */
-    protected $fvalueInt = self::DEFAULT_INT;
-
-
-    /**
-     * Float value of given field
-     * @var float
-     */
-    protected $fvalueFloat = self::DEFAULT_FLOAT;
-
-    /**
-     * Image (image file content)
-     * @var mixed
-     */
-    protected $fvalueImage = self::DEFAULT_IMAGE;
-
-    /**
-     * Unix time
-     * @var float
-     */
-    protected $fvalueDatetime = self::DEFAULT_DATETIME;
-
-    /**
-     * Date (dd-mm-yyyy)
-     * @var string
-     */
-    protected $fvalueDate = self::DEFAULT_DATE;
-
-    /**
-     * Integer range
-     * @var array
-     */
-    protected $fvalueRangeInt = [
-        'fvalueRangeIntMin' => self::DEFAULT_INT,
-        'fvalueRangeIntMax' => self::DEFAULT_INT,
-    ];
-
-    /**
-     * Float range
-     * @var array
-     */
-    protected $fvalueRangeFloat = [
-        'fvalueRangeFloatMin' => self::DEFAULT_FLOAT,
-        'fvalueRangeFloatMax' => self::DEFAULT_FLOAT,
-    ];
-
-    /**
-     * Date range
-     * @var array
-     */
-    protected $fvalueRangeDate = [
-        'fvalueRangeDateMin' => self::DEFAULT_DATE,
-        'fvalueRangeDateMax' => self::DEFAULT_DATE,
-    ];
 
     /**
      * @param integer $fid WebAPI fid for given field
      * @param mixed $value value for given field
      * @param string $forceValueType value type to force (i.e. fvalueImage)
      */
-    public function __construct($fid, $value = null, $forceValueType = '')
+    public function __construct($fid = 0, $value = null, $forceValueType = '')
     {
-        if (!is_integer($fid)) {
-            throw new Exception('fid must be an integer, ' . gettype($fid) . ' given');
+        $this->setFid($fid);
+        $this->fValues = $this->getDefaults();
+
+        //null value should result in field with default values
+        if (is_null($value)) {
+            return;
         }
-        $this->fid = $fid;
 
         //if value type was specified (useful for fvalueImage, fvalueDatetime etc.)
         if ($forceValueType) {
@@ -117,13 +58,50 @@ class Field
         $this->setValueAutodetect($value);
     }
 
+    /**
+     * Default values, "empty" WebAPI fields item
+     * @return array
+     */
+    protected function getDefaults()
+    {
+        return [
+            self::VALUE_STRING => self::DEFAULT_STRING,
+            self::VALUE_INT => self::DEFAULT_INT,
+            self::VALUE_FLOAT => self::DEFAULT_FLOAT,
+            self::VALUE_IMAGE => self::DEFAULT_IMAGE,
+            self::VALUE_DATETIME => self::DEFAULT_DATETIME,
+            self::VALUE_DATE => self::DEFAULT_DATE,
+            self::VALUE_RANGE_INT => [
+                self::VALUE_RANGE_INT . 'Min' => self::DEFAULT_INT,
+                self::VALUE_RANGE_INT . 'Max' => self::DEFAULT_INT,
+            ],
+            self::VALUE_RANGE_FLOAT => [
+                self::VALUE_RANGE_FLOAT . 'Min' => self::DEFAULT_FLOAT,
+                self::VALUE_RANGE_FLOAT . 'Max' => self::DEFAULT_FLOAT,
+            ],
+            self::VALUE_RANGE_DATE => [
+                self::VALUE_RANGE_DATE . 'Min' => self::DEFAULT_DATE,
+                self::VALUE_RANGE_DATE . 'Max' => self::DEFAULT_DATE,
+            ],
+        ];
+    }
+
+
+    public function setFid($fid)
+    {
+        if (!is_integer($fid)) {
+            throw new Exception('fid must be an integer, ' . gettype($fid) . ' given');
+        }
+        $this->fid = $fid;
+    }
+
 
     protected function setValueAutodetect($value)
     {
         if (is_integer($value)) {
-            $this->fvalueInt = $value;
+            $this->fValues[self::VALUE_INT] = $value;
         } elseif (is_float($value)) {
-            $this->fvalueFloat = $value;
+            $this->fValues[self::VALUE_FLOAT] = $value;
         } elseif (is_string($value)) {
             $this->setValueStringAutodetect($value);
         } elseif (is_array($value)) {
@@ -141,9 +119,9 @@ class Field
     protected function setValueStringAutodetect($value)
     {
         if (preg_match('/^\d{2}\-\d{2}\-\d{4}$/', $value)) {
-            $this->fvalueDate = $value;
+            $this->fValues[self::VALUE_DATE] = $value;
         } else {
-            $this->fvalueString = $value;
+            $this->fValues[self::VALUE_STRING] = $value;
         }
     }
 
@@ -163,12 +141,12 @@ class Field
         asort($range);
 
         if ($this->isRangeFloat($range)) {
-            $this->fvalueRangeFloat = array_combine(
+            $this->fValues[self::VALUE_RANGE_FLOAT] = array_combine(
                 ['fvalueRangeFloatMin', 'fvalueRangeFloatMax'],
                 $range
             );
         } elseif($this->isRangeInt($range)) {
-            $this->fvalueRangeInt = array_combine(
+            $this->fValues[self::VALUE_RANGE_INT] = array_combine(
                 ['fvalueRangeIntMin', 'fvalueRangeIntMax'],
                 $range
             );
@@ -200,14 +178,13 @@ class Field
     }
 
 
-
     protected function setValueForced($forceValueType, $value)
     {
-        if (!property_exists($this, $forceValueType)) {
+        if (!array_key_exists($forceValueType, $this->fValues)) {
             throw new Exception("Class " . get_class($this) . " does not have property: {$forceValueType}");
         }
 
-        $this->{$forceValueType} = $value;
+        $this->fValues[$forceValueType] = $value;
     }
 
 
@@ -217,18 +194,8 @@ class Field
      */
     public function toArray()
     {
-        return [
-            'fid' => $this->fid,
-            'fvalueString' => $this->fvalueString,
-            'fvalueInt' => $this->fvalueInt,
-            'fvalueFloat' => $this->fvalueFloat,
-            'fvalueImage' => $this->fvalueImage,
-            'fvalueDatetime' => $this->fvalueDatetime,
-            'fvalueDate' => $this->fvalueDate,
-            'fvalueRangeInt' => $this->fvalueRangeInt,
-            'fvalueRangeFloat' => $this->fvalueRangeFloat,
-            'fvalueRangeDate' => $this->fvalueRangeDate,
-        ];
+        $this->fValues['fid'] = $this->fid;
+        return $this->fValues;
     }
 
 
@@ -240,12 +207,19 @@ class Field
         //recursive object to array :)
         $array = json_decode(json_encode($array), true);
 
+        if (!array_key_exists('fid', $array)) {
+            throw new Exception('Fid is required');
+        }
+
+        $this->setFid($array['fid']);
+        unset($array['fid']);
+
         foreach($array as $key => $value) {
-            if (!property_exists($this, $key)) {
+            if (!array_key_exists($key, $this->fValues)) {
                 throw new Exception("Unknown Field property: {$key}");
             }
 
-            $this->{$key} = $value;
+            $this->fValues[$key] = $value;
         }
     }
 
@@ -262,55 +236,16 @@ class Field
      */
     public function getValue()
     {
-        if ($this->fvalueString !== self::DEFAULT_STRING) {
-            return $this->fvalueString;
-        }
-
-        if ($this->fvalueInt !== self::DEFAULT_INT) {
-            return $this->fvalueInt;
-        }
-
-        if ($this->fvalueFloat !== self::DEFAULT_FLOAT) {
-            return $this->fvalueFloat;
-        }
-
-        if ($this->fvalueImage !== self::DEFAULT_IMAGE) {
-            return base64_decode($this->fvalueImage);
-        }
-
-        if ($this->fvalueDatetime !== self::DEFAULT_DATETIME) {
-            return $this->fvalueDatetime;
-        }
-
-        if ($this->fvalueDate !== self::DEFAULT_DATE) {
-            return $this->fvalueDate;
-        }
-
-        $rangeValue = $this->getRangeValue();
-        if (!is_null($rangeValue)) {
-            return $rangeValue;
+        $defaults = $this->getDefaults();
+        foreach($this->fValues as $key => $fValue) {
+            if ($fValue !== $defaults[$key]) {
+                return is_array($fValue) ? array_values($fValue) : $fValue;
+            }
         }
 
         //if all values are at defaults, we're unable to determine
         //which one was set without additional business logic involving
         //fids - especially if the defaults come from WebAPI (fromArray())
-        return null;
-    }
-
-
-    protected function getRangeValue()
-    {
-        $rangeFloat = array_values($this->fvalueRangeFloat);
-        if ($rangeFloat !== array_fill(0, 2, self::DEFAULT_FLOAT)) {
-            return $rangeFloat;
-        }
-
-        $rangeInt = array_values($this->fvalueRangeInt);
-        if ($rangeInt !== array_fill(0, 2, self::DEFAULT_INT)) {
-            return $rangeInt;
-        }
-
-        //@TODO date ranges
         return null;
     }
 

@@ -5,6 +5,29 @@ use Radowoj\Yaah\Field;
 
 class FieldTest extends TestCase
 {
+    protected $defaultValues = [
+        'fid' => 1,
+        'fvalueString' => '',
+        'fvalueInt' => 0,
+        'fvalueFloat' => 0,
+        'fvalueImage' => '',
+        'fvalueDatetime' => 0,
+        'fvalueDate' => '',
+        'fvalueRangeInt' => [
+            'fvalueRangeIntMin' => 0,
+            'fvalueRangeIntMax' => 0,
+        ],
+        'fvalueRangeFloat' => [
+            'fvalueRangeFloatMin' => 0,
+            'fvalueRangeFloatMax' => 0,
+        ],
+        'fvalueRangeDate' => [
+            'fvalueRangeDateMin' => '',
+            'fvalueRangeDateMax' => '',
+        ],
+    ];
+
+
     /**
      * @expectedException Radowoj\Yaah\Exception
      * @expectedExceptionMessage fid must be an integer
@@ -79,9 +102,9 @@ class FieldTest extends TestCase
     public function testValueTypes($testValue, $arrayKey)
     {
         $field = new Field(1, $testValue);
-        $this->assertArrayHasKey($arrayKey, $field->toArray());
-        $this->assertSame($field->toArray()[$arrayKey], $testValue);
-        $this->assertSame($field->getValue(), $testValue);
+        $this->assertArrayHasKey($arrayKey, $field->toArray(), 'Key not present in result array');
+        $this->assertSame($field->toArray()[$arrayKey], $testValue, 'Different value in result array');
+        $this->assertSame($field->getValue(), $testValue, 'Different getValue() return value');
     }
 
 
@@ -177,6 +200,22 @@ class FieldTest extends TestCase
     {
         $field = new Field(42, 'don\'t panic!');
         $this->assertSame($field->getFid(), 42);
+    }
+
+
+    /**
+     * @dataProvider valueTypesProvider
+     */
+    public function testCreatingFromArray($value, $key)
+    {
+        $array = $this->defaultValues;
+        $array[$key] = $value;
+        $field = new Field(42);
+        $field->fromArray($array);
+
+        $this->assertSame($field->getValue(), $value);
+        $this->assertSame($field->getFid(), $this->defaultValues['fid']);
+
     }
 
 }
