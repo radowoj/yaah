@@ -120,7 +120,6 @@ class FieldTest extends TestCase
                 [10, 11],
                 'fvalueRangeInt'
             ],
-            //@TODO
             // 'date range' => [
             //     ['01-03-2017', '03-03-2017'],
             //     'fvalueRangeDate'
@@ -215,7 +214,50 @@ class FieldTest extends TestCase
 
         $this->assertSame($field->getValue(), $value);
         $this->assertSame($field->getFid(), $this->defaultValues['fid']);
-
     }
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Range array must have exactly 2 elements
+     */
+    public function testExceptionOnInvalidRangeArrayItemCount()
+    {
+        $field = new Field(12, [1, 2, 3]);
+    }
+
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Fid is required
+     */
+    public function testExceptionOnFromArrayMissingFid()
+    {
+        $fieldArray = $this->defaultValues;
+        unset($fieldArray['fid']);
+        $field = new Field();
+        $field->fromArray($fieldArray);
+    }
+
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Unknown Field property: thisKeyIsInvalid
+     */
+    public function testExceptionOnFromArrayInvalidArrayKey()
+    {
+        $fieldArray = $this->defaultValues;
+        $fieldArray['thisKeyIsInvalid'] = 'whatever';
+        $field = new Field();
+        $field->fromArray($fieldArray);
+    }
+
+
+    public function testNullReturnValueWhenAllFieldsAreDefault()
+    {
+        $field = new Field();
+        $field->fromArray($this->defaultValues);
+        $this->assertNull($field->getValue());
+    }
+
 
 }
