@@ -3,6 +3,7 @@
 namespace Radowoj\Yaah;
 
 use Radowoj\Yaah\Constants\AuctionFids;
+use InvalidArgumentException;
 
 class Auction
 {
@@ -23,7 +24,7 @@ class Auction
         $photosCount = count($photos);
 
         if ($photosCount > self::MAX_PHOTOS) {
-            throw new Exception("Photo files limit exceeded, " . self::MAX_PHOTOS . " allowed, " . $photosCount . " given");
+            throw new InvalidArgumentException("Photo files limit exceeded, " . self::MAX_PHOTOS . " allowed, " . $photosCount . " given");
         }
 
         $this->photos = $photos;

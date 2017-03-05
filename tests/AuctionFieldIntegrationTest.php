@@ -1,5 +1,7 @@
 <?php
 
+namespace Radowoj\Yaah;
+
 use PHPUnit\Framework\TestCase;
 use Radowoj\Yaah\Auction;
 
@@ -7,7 +9,7 @@ class AuctionFieldIntegrationTest extends TestCase
 {
 
     /**
-     * @expectedException Radowoj\Yaah\Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Photo files limit exceeded, 8 allowed, 9 given
      */
     public function testExceptionOnTooManyPhotos()

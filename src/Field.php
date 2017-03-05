@@ -2,6 +2,8 @@
 
 namespace Radowoj\Yaah;
 
+use InvalidArgumentException;
+
 /**
  * Class representation of WebAPI auction field
  */
@@ -100,7 +102,7 @@ class Field
     public function setFid($fid)
     {
         if (!is_integer($fid)) {
-            throw new Exception('fid must be an integer, ' . gettype($fid) . ' given');
+            throw new InvalidArgumentException('fid must be an integer, ' . gettype($fid) . ' given');
         }
         $this->fid = $fid;
     }
@@ -121,7 +123,7 @@ class Field
         } elseif (is_array($value)) {
             $this->setValueRangeAutodetect($value);
         } else {
-            throw new Exception('Not supported value type: ' . gettype($value) . "; fid={$this->fid}");
+            throw new InvalidArgumentException('Not supported value type: ' . gettype($value) . "; fid={$this->fid}");
         }
     }
 
@@ -147,7 +149,7 @@ class Field
     protected function setValueRangeAutodetect(array $range)
     {
         if (count($range) !== 2) {
-            throw new Exception('Range array must have exactly 2 elements');
+            throw new InvalidArgumentException('Range array must have exactly 2 elements');
         }
 
         //make sure array has numeric keys
@@ -201,7 +203,7 @@ class Field
     protected function setValueForced($forceValueType, $value)
     {
         if (!array_key_exists($forceValueType, $this->fValues)) {
-            throw new Exception("Class " . get_class($this) . " does not have property: {$forceValueType}");
+            throw new InvalidArgumentException("Class " . get_class($this) . " does not have property: {$forceValueType}");
         }
 
         $this->fValues[$forceValueType] = $value;
@@ -228,7 +230,7 @@ class Field
         $array = json_decode(json_encode($array), true);
 
         if (!array_key_exists('fid', $array)) {
-            throw new Exception('Fid is required');
+            throw new InvalidArgumentException('Fid is required');
         }
 
         $this->setFid($array['fid']);
@@ -236,7 +238,7 @@ class Field
 
         foreach ($array as $key => $value) {
             if (!array_key_exists($key, $this->fValues)) {
-                throw new Exception("Unknown Field property: {$key}");
+                throw new InvalidArgumentException("Unknown Field property: {$key}");
             }
 
             $this->fValues[$key] = $value;

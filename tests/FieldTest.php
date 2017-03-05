@@ -1,5 +1,7 @@
 <?php
 
+namespace Radowoj\Yaah;
+
 use PHPUnit\Framework\TestCase;
 use Radowoj\Yaah\Field;
 
@@ -29,7 +31,7 @@ class FieldTest extends TestCase
 
 
     /**
-     * @expectedException Radowoj\Yaah\Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage fid must be an integer
      */
     public function testNonIntegerFid()
@@ -171,8 +173,9 @@ class FieldTest extends TestCase
         $this->assertSame($field->getValue(), $datetime);
     }
 
+
     /**
-     * @expectedException Radowoj\Yaah\Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Not supported value type: object; fid=1
      */
     public function testExceptionOnInvalidValue()
@@ -182,7 +185,7 @@ class FieldTest extends TestCase
 
 
     /**
-     * @expectedException Radowoj\Yaah\Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Class Radowoj\Yaah\Field does not have property: fvalueUnicorn
      */
     public function testExceptionOnInvalidForcedValue()
@@ -217,7 +220,7 @@ class FieldTest extends TestCase
     }
 
     /**
-     * @expectedException Radowoj\Yaah\Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Range array must have exactly 2 elements
      */
     public function testExceptionOnInvalidRangeArrayItemCount()
@@ -227,7 +230,7 @@ class FieldTest extends TestCase
 
 
     /**
-     * @expectedException Radowoj\Yaah\Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Fid is required
      */
     public function testExceptionOnFromArrayMissingFid()
@@ -240,7 +243,7 @@ class FieldTest extends TestCase
 
 
     /**
-     * @expectedException Radowoj\Yaah\Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Unknown Field property: thisKeyIsInvalid
      */
     public function testExceptionOnFromArrayInvalidArrayKey()

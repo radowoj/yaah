@@ -2,6 +2,8 @@
 
 namespace Radowoj\Yaah;
 
+use InvalidArgumentException;
+
 class Config
 {
     /**
@@ -54,7 +56,7 @@ class Config
 
         foreach ($requiredParams as $property) {
             if (!array_key_exists($property, $params)) {
-                throw new Exception("{$property} is required in params array");
+                throw new InvalidArgumentException("{$property} is required in params array");
             }
 
             $this->{$property} = $params[$property];
