@@ -43,7 +43,7 @@ class AuctionHelper
      * @param integer $localId - local item id, required by WebAPI
      * @return integer id of created auction
      */
-    public function newAuction(Auction $auction, $localId)
+    public function newAuction(AuctionInterface $auction, $localId)
     {
         $auctionArray = $auction->toApiRepresentation();
         $auctionArray['localId'] = $localId;

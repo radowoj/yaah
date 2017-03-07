@@ -5,7 +5,7 @@ namespace Radowoj\Yaah;
 use Radowoj\Yaah\Constants\AuctionFids;
 use InvalidArgumentException;
 
-class Auction
+class Auction implements AuctionInterface
 {
     const MAX_PHOTOS = 8;
 
@@ -19,6 +19,10 @@ class Auction
     }
 
 
+    /**
+     * Sets photos for auction
+     * @param array $photos array of photo file paths
+     */
     public function setPhotos(array $photos)
     {
         $photosCount = count($photos);
@@ -31,6 +35,10 @@ class Auction
     }
 
 
+    /**
+     * Returns WebAPI's representation of an auction (array of fields)
+     * @return array
+     */
     public function toApiRepresentation()
     {
         $fields = [];
@@ -47,19 +55,27 @@ class Auction
     }
 
 
+    /**
+     * Creates an auction from WebAPI's representation (array of fields)
+     * @param  array  $fields
+     */
     public function fromApiRepresentation(array $fields)
     {
         $this->fields = [];
         $this->photos = [];
 
         foreach ($fields as $apiField) {
-            $field = new Field(0, '');
+            $field = new Field();
             $field->fromArray((array)$apiField);
             $this->fields[$field->getFid()] = $field->getValue();
         }
     }
 
 
+    /**
+     * Add photos to given array of Fields
+     * @param array& $fields array of Fields to extend with photos
+     */
     protected function addPhotoFields(array& $fields)
     {
         $count = count($this->photos);
