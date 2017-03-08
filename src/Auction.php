@@ -92,7 +92,7 @@ class Auction implements AuctionInterface
         $index = 0;
         foreach ($this->photos as $photo) {
             if (!is_readable($photo)) {
-                throw new Exception("Photo file {$photo} is not readable");
+                throw new Exception("Photo file is not readable: {$photo}");
             }
 
             $fields[] = (new Field(AuctionFids::FID_PHOTO + $index, file_get_contents($photo), Field::VALUE_IMAGE))->toArray();
