@@ -78,7 +78,7 @@ class Client
 
         //validate basic response properties
         if (!is_object($response) || !isset($response->sessionHandlePart) || !isset($response->userId)) {
-            throw new Exception("Invalid WebAPI doLoginEnc() response: " . print_r($response, 1));
+            throw new Exception("Invalid WebAPI doLogin[Enc]() response: " . print_r($response, 1));
         }
 
         $this->allegroSessionHandle = $response->sessionHandlePart;
