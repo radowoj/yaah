@@ -14,6 +14,7 @@ use Radowoj\Yaah\Constants\SaleFormats;
 use Radowoj\Yaah\Constants\ShippingPaidBy;
 use Radowoj\Yaah\AuctionHelper;
 use Radowoj\Yaah\Constants\Wsdl;
+use Radowoj\Yaah\Decorators\MTGAuctionDecorator;
 
 try {
 
@@ -34,30 +35,31 @@ try {
 
     $auctionHelper = new AuctionHelper($client);
 
-    $auction = new Auction([
-        AuctionFids::FID_TITLE => 'Allegro test auction',
-        AuctionFids::FID_DESCRIPTION => 'Test auction description',
-        AuctionFids::FID_CATEGORY => 6092,
-        AuctionFids::FID_TIMESPAN => AuctionTimespans::TIMESPAN_3_DAYS,
-        AuctionFids::FID_QUANTITY => 100,
-        AuctionFids::FID_COUNTRY => 1,
-        AuctionFids::FID_REGION => 15,
-        AuctionFids::FID_CITY => 'SomeCity',
-        AuctionFids::FID_POSTCODE => '12-345',
-        AuctionFids::FID_CONDITION => Conditions::CONDITION_NEW,
-        AuctionFids::FID_SALE_FORMAT => SaleFormats::SALE_FORMAT_SHOP,
-        AuctionFids::FID_BUY_NOW_PRICE  => 43.21,
-        AuctionFids::FID_SHIPPING_PAID_BY => ShippingPaidBy::SHIPPING_PAID_BY_BUYER,
-        AuctionFids::FID_POST_PACKAGE_PRIORITY_PRICE => 12.34,
+    $mtgAuction = new MTGAuctionDecorator(new Auction());
+    $mtgAuction->fromArray([
+        'title' => 'Allegro test auction',
+        'description' => 'Test auction description',
+        'category' => 6092,
+        'timespan' => AuctionTimespans::TIMESPAN_3_DAYS,
+        'quantity' => 100,
+        'country' => 1,
+        'region' => 15,
+        'city' => 'SomeCity',
+        'postcode' => '12-345',
+        'condition' => Conditions::CONDITION_NEW,
+        'sale_format' => SaleFormats::SALE_FORMAT_SHOP,
+        'buy_now_price' => 43.21,
+        'shipping_paid_by' => ShippingPaidBy::SHIPPING_PAID_BY_BUYER,
+        'post_package_priority_price' => 12.34,
     ]);
 
-    $auction->setPhotos([
+    $mtgAuction->setPhotos([
         //array of (no more than 8) paths to photo files
     ]);
 
     $localId = 1;
 
-    $allegroItemId = $auctionHelper->newAuction($auction, $localId);
+    $allegroItemId = $auctionHelper->newAuction($mtgAuction, $localId);
 
     echo "Created auction with itemId = {$allegroItemId}\n";
 

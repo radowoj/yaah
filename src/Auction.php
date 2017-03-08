@@ -15,7 +15,7 @@ class Auction implements AuctionInterface
 
     public function __construct(array $fields = [])
     {
-        $this->fields = $fields;
+        $this->setFields($fields);
     }
 
 
@@ -32,6 +32,12 @@ class Auction implements AuctionInterface
         }
 
         $this->photos = $photos;
+    }
+
+
+    public function setFields(array $fields)
+    {
+        $this->fields = $fields;
     }
 
 
@@ -92,6 +98,18 @@ class Auction implements AuctionInterface
             $fields[] = (new Field(AuctionFids::FID_PHOTO + $index, file_get_contents($photo), Field::VALUE_IMAGE))->toArray();
             $index++;
         }
+    }
+
+
+    /**
+     * Simplified array representation (similar to constructor params)
+     * @return array
+     */
+    public function toArray()
+    {
+        $fields = $this->fields;
+        $this->addPhotoFields($fields);
+        return $this->fields;
     }
 
 }

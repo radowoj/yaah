@@ -19,7 +19,4 @@ class AuctionFids
     const FID_SHIPPING_PAID_BY = 12;
     const FID_POST_PACKAGE_PRIORITY_PRICE = 38;
 
-    //@TODO - move category-specific fids to decorator
-    const FID_CONDITION = 20626;
-
 }
