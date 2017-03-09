@@ -8,6 +8,73 @@ use Radowoj\Yaah\Auction;
 class AuctionTest extends TestCase
 {
 
+    protected function getAuctionArray()
+    {
+        return [
+            1 => 'test string',
+            2 => 42,
+            3 => '05-03-2017',
+            4 => 12.34,
+        ];
+    }
+
+
+    protected function getFakeApiRepresentation()
+    {
+        return [
+            [
+                'fid' => 1337,
+                'fvalueString' => '',
+                'fvalueInt' => 0,
+                'fvalueFloat' => 0,
+                'fvalueImage' => '',
+                'fvalueDatetime' => 0,
+                'fvalueDate' => '09-03-2017',
+                'fvalueRangeInt' => [
+                    'fvalueRangeIntMin' => 0,
+                    'fvalueRangeIntMax' => 0,
+                ],
+                'fvalueRangeFloat' => [
+                    'fvalueRangeFloatMin' => 0,
+                    'fvalueRangeFloatMax' => 0,
+                ],
+                'fvalueRangeDate' => [
+                    'fvalueRangeDateMin' => '',
+                    'fvalueRangeDateMax' => '',
+                ],
+            ],
+            [
+                'fid' => 42,
+                'fvalueString' => 'Ultimate Question of Life, the Universe, and Everything',
+                'fvalueInt' => 0,
+                'fvalueFloat' => 0,
+                'fvalueImage' => '',
+                'fvalueDatetime' => 0,
+                'fvalueDate' => '',
+                'fvalueRangeInt' => [
+                    'fvalueRangeIntMin' => 0,
+                    'fvalueRangeIntMax' => 0,
+                ],
+                'fvalueRangeFloat' => [
+                    'fvalueRangeFloatMin' => 0,
+                    'fvalueRangeFloatMax' => 0,
+                ],
+                'fvalueRangeDate' => [
+                    'fvalueRangeDateMin' => '',
+                    'fvalueRangeDateMax' => '',
+                ],
+            ],
+        ];
+    }
+
+    public function getFakeApiRepresentationExpectedArray()
+    {
+        return [
+            1337 => '09-03-2017',
+            42 => 'Ultimate Question of Life, the Universe, and Everything'
+        ];
+    }
+
     /**
      * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Photo files limit exceeded, 8 allowed, 9 given
@@ -23,12 +90,7 @@ class AuctionTest extends TestCase
 
     protected function prepareTestAuction()
     {
-        return new Auction([
-            1 => 'test string',
-            2 => 42,
-            3 => '05-03-2017',
-            4 => 12.34,
-        ]);
+        return new Auction($this->getAuctionArray());
     }
 
 
@@ -82,6 +144,13 @@ class AuctionTest extends TestCase
     }
 
 
+    public function testArrayRepresentation()
+    {
+        $auction = $this->prepareTestAuction();
+        $this->assertSame($this->getAuctionArray(), $auction->toArray());
+    }
+
+
     /**
      * @expectedException Radowoj\Yaah\Exception
      * @expectedExceptionMessage Photo file is not readable
@@ -95,13 +164,14 @@ class AuctionTest extends TestCase
         ]);
 
         $apiRepresentation = $auction->toApiRepresentation();
+    }
 
-        $this->assertArrayHasKey('fields', $apiRepresentation);
-        $this->assertEquals(5, count($apiRepresentation['fields']));
 
-        $fields = $apiRepresentation['fields'];
-
-        $this->checkTestAuctionFields($apiRepresentation['fields']);
+    public function testFromApiRepresentation()
+    {
+        $auction = new Auction();
+        $auction->fromApiRepresentation($this->getFakeApiRepresentation());
+        $this->assertSame($this->getFakeApiRepresentationExpectedArray(), $auction->toArray());
     }
 
 }
