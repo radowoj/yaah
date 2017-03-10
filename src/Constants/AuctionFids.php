@@ -11,6 +11,7 @@ class AuctionFids
     const FID_COUNTRY = 9;
     const FID_REGION = 10;
     const FID_CITY = 11;
+    const FID_PAYMENT_FORMS = 14;
     const FID_PHOTO = 16;
     const FID_DESCRIPTION = 24;
     const FID_POSTCODE = 32;

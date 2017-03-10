@@ -7,40 +7,34 @@ require_once 'config.php';
 use Radowoj\Yaah\Auction;
 use Radowoj\Yaah\Constants\AuctionTimespans;
 use Radowoj\Yaah\Constants\AuctionFids;
-use Radowoj\Yaah\Constants\Conditions;
 use Radowoj\Yaah\Constants\SaleFormats;
 use Radowoj\Yaah\Constants\ShippingPaidBy;
-use Radowoj\Yaah\Decorators\MTGAuctionDecorator;
+use Radowoj\Yaah\Constants\PaymentForms;
 use Radowoj\Yaah\HelperFactory\Factory;
 
 try {
     $helper = (new Factory())->create(require('config.php'));
 
-    $mtgAuction = new MTGAuctionDecorator(new Auction());
-    $mtgAuction->fromArray([
-        'title' => 'Allegro test auction',
-        'description' => 'Test auction description',
-        'category' => 6092,
-        'timespan' => AuctionTimespans::TIMESPAN_3_DAYS,
-        'quantity' => 100,
-        'country' => 1,
-        'region' => 15,
-        'city' => 'SomeCity',
-        'postcode' => '12-345',
-        'condition' => Conditions::CONDITION_NEW,
-        'sale_format' => SaleFormats::SALE_FORMAT_SHOP,
-        'buy_now_price' => 43.21,
-        'shipping_paid_by' => ShippingPaidBy::SHIPPING_PAID_BY_BUYER,
-        'post_package_priority_price' => 12.34,
-    ]);
-
-    $mtgAuction->setPhotos([
-        //array of (no more than 8) paths to photo files
-    ]);
-
     $localId = 1;
 
-    $allegroItemId = $helper->newAuction($mtgAuction, $localId);
+    $auction = new Auction([
+        AuctionFids::FID_TITLE => 'Test auction',
+        AuctionFids::FID_CATEGORY => 26319,
+        AuctionFids::FID_TIMESPAN => AuctionTimespans::TIMESPAN_7_DAYS,
+        AuctionFids::FID_QUANTITY => 1,
+        AuctionFids::FID_BUY_NOW_PRICE => 10.00,
+        AuctionFids::FID_COUNTRY => 1,
+        AuctionFids::FID_REGION => 15,
+        AuctionFids::FID_CITY => 'Poznan',
+        AuctionFids::FID_SHIPPING_PAID_BY => ShippingPaidBy::SHIPPING_PAID_BY_BUYER,
+        AuctionFids::FID_PAYMENT_FORMS => PaymentForms::PAYMENT_FORM_VAT_INVOICE,
+        AuctionFids::FID_DESCRIPTION => 'Test auction description',
+        AuctionFids::FID_POSTCODE => '12-345',
+        AuctionFids::FID_SALE_FORMAT => SaleFormats::SALE_FORMAT_NON_SHOP,
+        AuctionFids::FID_POST_PACKAGE_PRIORITY_PRICE => 11.00
+    ]);
+
+    $allegroItemId = $helper->newAuction($auction, $localId);
 
     echo "Created auction with itemId = {$allegroItemId}\n";
 
