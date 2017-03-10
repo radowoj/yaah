@@ -4,36 +4,17 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 require_once 'config.php';
 
-use Radowoj\Yaah\Config;
-use Radowoj\Yaah\Client;
 use Radowoj\Yaah\Auction;
 use Radowoj\Yaah\Constants\AuctionTimespans;
 use Radowoj\Yaah\Constants\AuctionFids;
 use Radowoj\Yaah\Constants\Conditions;
 use Radowoj\Yaah\Constants\SaleFormats;
 use Radowoj\Yaah\Constants\ShippingPaidBy;
-use Radowoj\Yaah\Helper;
-use Radowoj\Yaah\Constants\Wsdl;
 use Radowoj\Yaah\Decorators\MTGAuctionDecorator;
+use Radowoj\Yaah\HelperFactory\Factory;
 
 try {
-
-    $config = new Config(
-        include('config.php')
-    );
-
-    $soapClient = new SoapClient(
-        $config->getIsSandbox()
-            ? Wsdl::WSDL_SANDBOX
-            : Wsdl::WSDL_PRODUCTION
-    );
-
-    $client = new Client(
-        $config,
-        $soapClient
-    );
-
-    $helper = new Helper($client);
+    $helper = (new Factory())->create(require('config.php'));
 
     $mtgAuction = new MTGAuctionDecorator(new Auction());
     $mtgAuction->fromArray([
