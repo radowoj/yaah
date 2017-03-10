@@ -12,7 +12,7 @@ use Radowoj\Yaah\Constants\AuctionFids;
 use Radowoj\Yaah\Constants\Conditions;
 use Radowoj\Yaah\Constants\SaleFormats;
 use Radowoj\Yaah\Constants\ShippingPaidBy;
-use Radowoj\Yaah\AuctionHelper;
+use Radowoj\Yaah\Helper;
 use Radowoj\Yaah\Constants\Wsdl;
 use Radowoj\Yaah\Decorators\MTGAuctionDecorator;
 
@@ -33,7 +33,7 @@ try {
         $soapClient
     );
 
-    $auctionHelper = new AuctionHelper($client);
+    $helper = new Helper($client);
 
     $mtgAuction = new MTGAuctionDecorator(new Auction());
     $mtgAuction->fromArray([
@@ -59,7 +59,7 @@ try {
 
     $localId = 1;
 
-    $allegroItemId = $auctionHelper->newAuction($mtgAuction, $localId);
+    $allegroItemId = $helper->newAuction($mtgAuction, $localId);
 
     echo "Created auction with itemId = {$allegroItemId}\n";
 
