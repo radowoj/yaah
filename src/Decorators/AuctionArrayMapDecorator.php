@@ -4,7 +4,7 @@ namespace Radowoj\Yaah\Decorators;
 
 use Radowoj\Yaah\AuctionInterface;
 
-abstract class AuctionArrayMapDecorator implements AuctionInterface, AuctionDecoratorInterface
+abstract class AuctionArrayMapDecorator implements AuctionInterface
 {
     protected $auction = null;
 
@@ -27,7 +27,7 @@ abstract class AuctionArrayMapDecorator implements AuctionInterface, AuctionDeco
                 $fields[$this->map[$key]] = $value;
             }
         }
-        $this->auction->setFields($fields);
+        $this->auction->fromArray($fields);
     }
 
 
@@ -62,10 +62,6 @@ abstract class AuctionArrayMapDecorator implements AuctionInterface, AuctionDeco
         $this->auction->setPhotos($photos);
     }
 
-    public function setFields(array $fields)
-    {
-        $this->auction->setFields($fields);
-    }
 
 
 }

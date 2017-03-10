@@ -15,7 +15,7 @@ class Auction implements AuctionInterface
 
     public function __construct(array $fields = [])
     {
-        $this->setFields($fields);
+        $this->fromArray($fields);
     }
 
 
@@ -35,7 +35,7 @@ class Auction implements AuctionInterface
     }
 
 
-    public function setFields(array $fields)
+    public function fromArray(array $fields)
     {
         $this->fields = $fields;
     }

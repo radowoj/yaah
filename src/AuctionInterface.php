@@ -10,7 +10,7 @@ interface AuctionInterface
 
     public function setPhotos(array $photos);
 
-    public function setFields(array $fields);
+    public function fromArray(array $fields);
 
     public function toArray();
 
