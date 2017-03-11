@@ -1,11 +1,17 @@
 {
     "name": "radowoj/yaah",
-    "description": "Yet Another Allegro Helper :)",
+    "description": "Yet Another Allegro Helper - Allegro WebAPI client with helper to simplify communication",
     "type": "library",
+    "keywords": [
+        "allegro",
+        "php",
+        "webapi"
+    ],
+    "homepage": "https://github.com/radowoj/yaah",
     "license": "MIT",
     "authors": [
         {
-            "name": "radowoj",
+            "name": "Radosław Wojtyczka",
             "email": "radoslaw@wojtyczka.me"
         }
     ],
