@@ -4,7 +4,7 @@ namespace Radowoj\Yaah;
 
 use Radowoj\Yaah\Constants\SellFormOpts;
 
-class AuctionHelper
+class Helper
 {
     protected $client = null;
 

@@ -1,0 +1,2 @@
+Image validation is done by WebApi itself, so this file will be used
+to test just sending an "image" file by Yaah.
