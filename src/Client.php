@@ -98,7 +98,7 @@ class Client
         try {
             return $this->soapClient->{$name}($request);
         } catch (\Exception $e) {
-            throw new Exception('WebAPI exception: ' . $e->getMessage());
+            throw new Exception('WebAPI exception: ' . $e->getMessage() . "; trying to call: {$name}()");
         }
     }
 }
