@@ -8,29 +8,36 @@ use SoapClient;
 
 class HelperTest extends TestCase
 {
-    public function testNewAuction()
+    protected $config = null;
+
+    protected $soapClient = null;
+
+    public function setUp()
     {
-        $config = $this->getMockBuilder(Config::class)
+        $this->config = $this->getMockBuilder(Config::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $soapClient = $this->getMockBuilder(SoapClient::class)
+        $this->soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
             ->setMethods(['doQuerySysStatus', 'doLogin', 'doNewAuctionExt', 'doVerifyItem'])
             ->getMock();
 
-        $soapClient->expects($this->once())
+        $this->soapClient->expects($this->once())
             ->method('doQuerySysStatus')
             ->willReturn((object)['verKey' => 'someVersionKey']);
 
-        $soapClient->expects($this->once())
+        $this->soapClient->expects($this->once())
             ->method('doLogin')
             ->willReturn((object)['userId' => 'someUserId', 'sessionHandlePart' => 'someSessionHandlePart']);
 
+    }
 
 
+    public function testNewAuction()
+    {
         $apiClient = $this->getMockBuilder(Client::class)
-            ->setConstructorArgs([$config, $soapClient])
+            ->setConstructorArgs([$this->config, $this->soapClient])
             ->setMethods(['newAuctionExt', 'verifyItem'])
             ->getMock();
 
@@ -72,5 +79,28 @@ class HelperTest extends TestCase
         $result = $helper->newAuction(new Auction([1 => 'test title']), 1);
 
         $this->assertSame(1234, $result);
+    }
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Auction has not been created
+     */
+    public function testExceptionOnInvalidNewAuctionResponse()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->setConstructorArgs([$this->config, $this->soapClient])
+            ->setMethods(['newAuctionExt', 'verifyItem'])
+            ->getMock();
+
+        $apiClient->expects($this->once())
+            ->method('newAuctionExt')
+            ->willReturn((object)['whatever' => 1]);
+
+        $apiClient->expects($this->once())
+            ->method('verifyItem')
+            ->willReturn((object)['definitelyNotItemId' => 1234]);
+
+        $helper = new Helper($apiClient);
+        $helper->newAuction(new Auction([1 => 'test title']), 1);
     }
 }
