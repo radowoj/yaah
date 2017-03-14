@@ -136,6 +136,7 @@ class ClientTest extends TestCase
             ->willReturn((object)['sessionHandlePart' => 'foo']);
 
         $client = new Client($config, $soapClient);
+        $client->login();
     }
 
 
@@ -163,6 +164,7 @@ class ClientTest extends TestCase
             ->willReturn((object)['userId' => 'bar']);
 
         $client = new Client($config, $soapClient);
+        $client->login();
     }
 
 
@@ -185,6 +187,7 @@ class ClientTest extends TestCase
             ->willReturn((object)['trololo' => 'thisIsNotAVersionKey']);
 
         $client = new Client($config, $soapClient);
+        $client->login();
     }
 
 

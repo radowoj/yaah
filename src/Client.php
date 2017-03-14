@@ -22,7 +22,6 @@ class Client
     {
         $this->config = $config;
         $this->soapClient = $soapClient;
-        $this->login();
     }
 
 
@@ -88,6 +87,10 @@ class Client
 
     public function __call($name, $args)
     {
+        if (!$this->allegroUserId || !$this->allegroSessionHandle) {
+            $this->login();
+        }
+
         //prefix with WebAPI "do" prefix
         $name = 'do' . ucfirst($name);
 

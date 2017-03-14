@@ -20,17 +20,8 @@ class HelperTest extends TestCase
 
         $this->soapClient = $this->getMockBuilder(SoapClient::class)
             ->disableOriginalConstructor()
-            ->setMethods(['doQuerySysStatus', 'doLogin', 'doNewAuctionExt', 'doVerifyItem'])
+            ->setMethods(['doNewAuctionExt', 'doVerifyItem'])
             ->getMock();
-
-        $this->soapClient->expects($this->once())
-            ->method('doQuerySysStatus')
-            ->willReturn((object)['verKey' => 'someVersionKey']);
-
-        $this->soapClient->expects($this->once())
-            ->method('doLogin')
-            ->willReturn((object)['userId' => 'someUserId', 'sessionHandlePart' => 'someSessionHandlePart']);
-
     }
 
 
