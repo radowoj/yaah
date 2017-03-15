@@ -70,7 +70,7 @@ class ClientTest extends TestCase
                 'someFakeRequestParam' => 'someFakeRequestValue'
             ]));
 
-        $client->somethingAfterLogin(['someFakeRequestParam' => 'someFakeRequestValue']);
+        $client->doSomethingAfterLogin(['someFakeRequestParam' => 'someFakeRequestValue']);
     }
 
 
@@ -108,7 +108,7 @@ class ClientTest extends TestCase
                 'someFakeRequestParam' => 'someFakeRequestValue'
             ]));
 
-        $client->somethingAfterLogin(['someFakeRequestParam' => 'someFakeRequestValue']);
+        $client->doSomethingAfterLogin(['someFakeRequestParam' => 'someFakeRequestValue']);
     }
 
 

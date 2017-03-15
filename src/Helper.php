@@ -20,7 +20,7 @@ class Helper
      */
     public function getFieldsByCategory($idCategory)
     {
-        $data = $this->client->getSellFormFieldsForCategory(['categoryId' => $idCategory]);
+        $data = $this->client->doGetSellFormFieldsForCategory(['categoryId' => $idCategory]);
         $items = $data->sellFormFieldsForCategory->sellFormFieldsList->item;
 
         return array_map(function ($item) {
@@ -48,8 +48,8 @@ class Helper
         $auctionArray = $auction->toApiRepresentation();
         $auctionArray['localId'] = $localId;
 
-        $resultNewAuction = $this->client->newAuctionExt($auctionArray);
-        $resultVerify = $this->client->verifyItem(['localId' => $localId]);
+        $resultNewAuction = $this->client->doNewAuctionExt($auctionArray);
+        $resultVerify = $this->client->doVerifyItem(['localId' => $localId]);
 
         if (!is_object($resultVerify) || !isset($resultVerify->itemId)) {
             throw new Exception("Auction has not been created: " . print_r($resultVerify, 1));
@@ -89,7 +89,7 @@ class Helper
             ];
         }, $auctionIds);
 
-        return $this->client->finishItems(['finishItemsList' => $finishItemsList]);
+        return $this->client->doFinishItems(['finishItemsList' => $finishItemsList]);
     }
 
     /**
@@ -100,7 +100,7 @@ class Helper
      */
     public function changeQuantity($auctionId, $newQuantity)
     {
-        return $this->client->changeQuantityItem([
+        return $this->client->doChangeQuantityItem([
             'itemId' => $auctionId,
             'newItemQuantity' => $newQuantity
         ]);
@@ -114,7 +114,7 @@ class Helper
      */
     public function getSiteJournalDeals($journalStart)
     {
-        $response = $this->client->getSiteJournalDeals(['journalStart' => $journalStart]);
+        $response = $this->client->doGetSiteJournalDeals(['journalStart' => $journalStart]);
         if (isset($response->siteJournalDeals->item)) {
             return $response->siteJournalDeals->item;
         }
@@ -129,7 +129,7 @@ class Helper
      */
     public function getAuctionByItemId($itemId)
     {
-        $response =  $this->client->getItemFields(['itemId' => $itemId]);
+        $response =  $this->client->doGetItemFields(['itemId' => $itemId]);
         if (isset($response->itemFields->item)) {
             $auction = new Auction();
             $auction->fromApiRepresentation($response->itemFields->item);
@@ -139,5 +139,20 @@ class Helper
         return null;
     }
 
+
+    /**
+     * Directly call WebAPI method (prefixed by "do")
+     * @param  string $name method name
+     * @param  [type] $args method arguments
+     * @return [type]       [description]
+     */
+    public function __call($name, $args)
+    {
+        if (strpos($name, 'do') !== 0) {
+            throw new Exception("Method {$name} is not implemented in " . get_class($this));
+        }
+
+        return call_user_func_array([$this->client, $name], $args);
+    }
 
 }

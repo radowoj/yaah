@@ -4,6 +4,7 @@ namespace Radowoj\Yaah;
 
 use stdClass;
 use SoapClient;
+use SoapFault;
 use Radowoj\Yaah\Constants\Sysvars;
 
 class Client
@@ -91,17 +92,14 @@ class Client
             $this->login();
         }
 
-        //prefix with WebAPI "do" prefix
-        $name = 'do' . ucfirst($name);
-
         $request = $this->getWebApiRequest(
             array_key_exists(0, $args) ? $args[0] : []
         );
 
         try {
             return $this->soapClient->{$name}($request);
-        } catch (\Exception $e) {
-            throw new Exception('WebAPI exception: ' . $e->getMessage() . "; trying to call: {$name}()");
+        } catch (SoapFault $e) {
+            throw new Exception("Trying to call: {$name}(); WebAPI exception: {$e->getMessage()}");
         }
     }
 }
