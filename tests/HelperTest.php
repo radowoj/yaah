@@ -163,4 +163,69 @@ class HelperTest extends TestCase
     }
 
 
+
+    public function providerFinishAuctions()
+    {
+        return [
+            'do not cancel all bids, no reason' => [
+                0,
+                ''
+            ],
+            'cancel all bids, no reason' => [
+                1,
+                ''
+            ],
+            'do not cancel all bids, some reason' => [
+                0,
+                'some reason'
+            ],
+            'cancel all bids, some reason' => [
+                1,
+                'some reason'
+            ],
+
+        ];
+    }
+
+    /**
+     * @dataProvider providerFinishAuctions
+     */
+
+    public function testFinishAuctions($finishCancelAllBids, $finishCancelReason)
+    {
+        $auctionIds = [31337, 1337, 42];
+
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->setConstructorArgs([$this->config, $this->soapClient])
+            ->setMethods(['getLocalVersionKey', 'login', 'doFinishItems'])
+            ->getMock();
+
+        $apiClient->expects($this->once())
+            ->method('doFinishItems')
+            ->with($this->equalTo([
+                'finishItemsList' => [
+                    [
+                        'finishItemId' => 31337,
+                        'finishCancelAllBids' => $finishCancelAllBids,
+                        'finishCancelReason' => $finishCancelReason
+                    ],
+                    [
+                        'finishItemId' => 1337,
+                        'finishCancelAllBids' => $finishCancelAllBids,
+                        'finishCancelReason' => $finishCancelReason
+                    ],
+                    [
+                        'finishItemId' => 42,
+                        'finishCancelAllBids' => $finishCancelAllBids,
+                        'finishCancelReason' => $finishCancelReason
+                    ],
+                ]
+            ]));
+
+        $helper = new Helper($apiClient);
+
+        $result = $helper->finishAuctions($auctionIds, $finishCancelAllBids, $finishCancelReason);
+    }
+
+
 }
