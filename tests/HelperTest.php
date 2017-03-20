@@ -190,7 +190,6 @@ class HelperTest extends TestCase
     /**
      * @dataProvider providerFinishAuctions
      */
-
     public function testFinishAuctions($finishCancelAllBids, $finishCancelReason)
     {
         $auctionIds = [31337, 1337, 42];
@@ -226,6 +225,35 @@ class HelperTest extends TestCase
 
         $result = $helper->finishAuctions($auctionIds, $finishCancelAllBids, $finishCancelReason);
     }
+
+    /**
+     * @dataProvider providerFinishAuctions
+     */
+    public function testFinishAuction($finishCancelAllBids, $finishCancelReason)
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->setConstructorArgs([$this->config, $this->soapClient])
+            ->setMethods(['getLocalVersionKey', 'login', 'doFinishItems'])
+            ->getMock();
+
+        $apiClient->expects($this->once())
+            ->method('doFinishItems')
+            ->with($this->equalTo([
+                'finishItemsList' => [
+                    [
+                        'finishItemId' => 31337,
+                        'finishCancelAllBids' => $finishCancelAllBids,
+                        'finishCancelReason' => $finishCancelReason
+                    ],
+                ]
+            ]));
+
+        $helper = new Helper($apiClient);
+
+        $result = $helper->finishAuction(31337, $finishCancelAllBids, $finishCancelReason);
+    }
+
+
 
 
 }
