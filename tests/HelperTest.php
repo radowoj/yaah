@@ -254,6 +254,25 @@ class HelperTest extends TestCase
     }
 
 
+    public function testChangeQuantity()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->setConstructorArgs([$this->config, $this->soapClient])
+            ->setMethods(['getLocalVersionKey', 'login', 'doChangeQuantityItem'])
+            ->getMock();
+
+        $apiClient->expects($this->once())
+            ->method('doChangeQuantityItem')
+            ->with($this->equalTo([
+                'itemId' => 1337,
+                'newItemQuantity' => 42
+            ]));
+
+        $helper = new Helper($apiClient);
+        $helper->changeQuantity(1337, 42);
+    }
+
+
 
 
 }
