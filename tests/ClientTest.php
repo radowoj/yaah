@@ -7,6 +7,7 @@ use Radowoj\Yaah\Config;
 use Radowoj\Yaah\Client;
 
 use SoapClient;
+use SoapFault;
 
 class ClientTest extends TestCase
 {
@@ -188,6 +189,37 @@ class ClientTest extends TestCase
 
         $client = new Client($config, $soapClient);
         $client->login();
+    }
+
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Trying to call: doSomething(); WebAPI exception: someException
+     */
+    public function testExceptionRethrownFromWebapi()
+    {
+        $config = $this->getConfig();
+
+        $soapClient = $this->getMockBuilder(SoapClient::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['doQuerySysStatus', 'doSomethingAfterLogin', 'doSomething', 'doLoginEnc'])
+            ->getMock();
+
+        //Allegro version key should be requested for first login per request
+        $soapClient->expects($this->once())
+            ->method('doQuerySysStatus')
+            ->willReturn((object)['verKey' => 'someVersionKey']);
+
+        $soapClient->expects($this->once())
+            ->method('doLoginEnc')
+            ->willReturn((object)['userId' => 12312, 'sessionHandlePart' => 'someSessionHandle']);
+
+        $soapClient->expects($this->once())
+            ->method('doSomething')
+            ->will($this->throwException(new SoapFault('code', 'someException')));
+
+        $client = new Client($config, $soapClient);
+        $client->doSomething();
     }
 
 
