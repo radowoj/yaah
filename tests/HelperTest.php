@@ -271,6 +271,22 @@ class HelperTest extends TestCase
         $helper = new Helper($apiClient);
         $helper->changeQuantity(1337, 42);
     }
+    
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Method nonexistentMethodWithoutWebApiDoPrefix is not implemented
+     */
+    public function testExceptionOnNonexistentMethodWithoutDoPrefix()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->setConstructorArgs([$this->config, $this->soapClient])
+            ->setMethods(['getLocalVersionKey', 'login', 'doChangeQuantityItem'])
+            ->getMock();
+
+        $helper = new Helper($apiClient);
+        $helper->nonexistentMethodWithoutWebApiDoPrefix();
+    }
 
 
 
