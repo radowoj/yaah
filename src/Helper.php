@@ -21,6 +21,11 @@ class Helper
     public function getFieldsByCategory($idCategory)
     {
         $data = $this->client->doGetSellFormFieldsForCategory(['categoryId' => $idCategory]);
+
+        if (!isset($data->sellFormFieldsForCategory->sellFormFieldsList->item)) {
+            throw new Exception('Invalid WebAPI response: ' . print_r($data, 1));
+        }
+
         $items = $data->sellFormFieldsForCategory->sellFormFieldsList->item;
 
         return array_map(function ($item) {

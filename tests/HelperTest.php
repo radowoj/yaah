@@ -271,7 +271,7 @@ class HelperTest extends TestCase
         $helper = new Helper($apiClient);
         $helper->changeQuantity(1337, 42);
     }
-    
+
 
     /**
      * @expectedException Radowoj\Yaah\Exception
@@ -286,6 +286,77 @@ class HelperTest extends TestCase
 
         $helper = new Helper($apiClient);
         $helper->nonexistentMethodWithoutWebApiDoPrefix();
+    }
+
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Invalid WebAPI response
+     */
+    public function testExceptionOnInvalidApiResponseFromGetFieldsByCategory()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->setConstructorArgs([$this->config, $this->soapClient])
+            ->setMethods(['getLocalVersionKey', 'login', 'doGetSellFormFieldsForCategory'])
+            ->getMock();
+
+        $helper = new Helper($apiClient);
+        $helper->getFieldsByCategory(42);
+    }
+
+    public function testGetFieldsByCategory()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->setConstructorArgs([$this->config, $this->soapClient])
+            ->setMethods(['getLocalVersionKey', 'login', 'doGetSellFormFieldsForCategory'])
+            ->getMock();
+
+        $apiClient->expects($this->once())
+            ->method('doGetSellFormFieldsForCategory')
+            ->willReturn((object)[
+                'sellFormFieldsForCategory' => (object)[
+                    'sellFormFieldsList' => (object)[
+                        'item' => [
+                            (object)[
+                                'sellFormId' => 1,
+                                'sellFormTitle' => 'Some field title',
+                                'sellFormOpt' => 1,
+                                'sellFormOptsValues' => '0|1',
+                                'sellFormDesc' => 'Some sell form description',
+                            ],
+                            (object)[
+                                'sellFormId' => 2,
+                                'sellFormTitle' => 'Some other field title',
+                                'sellFormOpt' => 8,
+                                'sellFormOptsValues' => '0|1|2',
+                                'sellFormDesc' => 'Some other sell form description',
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
+
+        $helper = new Helper($apiClient);
+        $result = $helper->getFieldsByCategory(42);
+
+        $this->assertSame([
+            [
+                'fid' => 1,
+                'title' => 'Some field title',
+                'required' => true,
+                'options' => '0|1',
+                'optionsDesc' => 'Some sell form description',
+            ],
+            [
+                'fid' => 2,
+                'title' => 'Some other field title',
+                'required' => false,
+                'options' => '0|1|2',
+                'optionsDesc' => 'Some other sell form description',
+            ],
+
+        ], $result);
+
     }
 
 
