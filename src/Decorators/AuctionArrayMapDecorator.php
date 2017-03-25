@@ -6,6 +6,14 @@ use Radowoj\Yaah\AuctionInterface;
 
 abstract class AuctionArrayMapDecorator implements AuctionInterface
 {
+    /**
+     * Override this constant in child class.
+     * One decorator should represent one category, as even two Allegro categories can
+     * have same field under different FIDs, for example in Magic: The Gathering cards:
+     * - category id 6089 (artifacts) has condition (new/used) under fid 26013
+     * - category id 6090 (white) has condition under fid 20624
+     */
+
     protected $auction = null;
 
     protected $map = [

@@ -4,13 +4,13 @@ namespace Radowoj\Yaah\Decorators;
 
 use PHPUnit\Framework\TestCase;
 use Radowoj\Yaah\Auction;
-use Radowoj\Yaah\Decorators\MTGAuctionDecorator;
+use Radowoj\Yaah\Decorators\MTGRedAuctionDecorator;
 use Radowoj\Yaah\Constants\AuctionTimespans;
 use Radowoj\Yaah\Constants\Conditions;
 use Radowoj\Yaah\Constants\SaleFormats;
 use Radowoj\Yaah\Constants\ShippingPaidBy;
 
-class MTGAuctionDecoratorTest extends TestCase
+class MTGRedAuctionDecoratorTest extends TestCase
 {
 
 
@@ -75,7 +75,7 @@ class MTGAuctionDecoratorTest extends TestCase
             ->method('fromArray')
             ->with($this->getTestFidArray())
             ->willReturn(null);
-        $decorator = new MTGAuctionDecorator($auction);
+        $decorator = new MTGRedAuctionDecorator($auction);
 
         $decorator->fromArray($this->getTestArray());
     }
@@ -90,7 +90,7 @@ class MTGAuctionDecoratorTest extends TestCase
         $auction->expects($this->once())
             ->method('toArray')
             ->willReturn($this->getTestFidArray());
-        $decorator = new MTGAuctionDecorator($auction);
+        $decorator = new MTGRedAuctionDecorator($auction);
 
         $this->assertSame($this->getTestArray(), $decorator->toArray());
     }
@@ -107,7 +107,7 @@ class MTGAuctionDecoratorTest extends TestCase
             ->with($this->getTestPhotoArray())
             ->willReturn(null);
 
-        $decorator = new MTGAuctionDecorator($auction);
+        $decorator = new MTGRedAuctionDecorator($auction);
         $decorator->setPhotos($this->getTestPhotoArray());
     }
 
@@ -126,7 +126,7 @@ class MTGAuctionDecoratorTest extends TestCase
             ->method('toApiRepresentation')
             ->willReturn($expectedResult);
 
-        $decorator = new MTGAuctionDecorator($auction);
+        $decorator = new MTGRedAuctionDecorator($auction);
         $result = $decorator->toApiRepresentation();
         $this->assertSame($expectedResult, $result);
     }
@@ -147,7 +147,7 @@ class MTGAuctionDecoratorTest extends TestCase
             ->with($this->equalTo($expectedArgument));
 
 
-        $decorator = new MTGAuctionDecorator($auction);
+        $decorator = new MTGRedAuctionDecorator($auction);
         $result = $decorator->fromApiRepresentation($expectedArgument);
     }
 
