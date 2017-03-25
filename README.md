@@ -69,7 +69,7 @@ echo "Created auction with itemId = {$allegroItemId}\n";
 
 ## Example 2
 
-**New auction via category-specific decorator (more readable input array)**
+**New auction via category-specific decorator. More human readable (associative array instead of numeric FID-indexed array). Also, with the help of multiple decorators (one per category) you can map the same array key (i.e. condition) to different category-specific FIDs.**
 
 ```php
 use Radowoj\Yaah\Auction;
@@ -78,7 +78,7 @@ use Radowoj\Yaah\Constants\AuctionFids;
 use Radowoj\Yaah\Constants\Conditions;
 use Radowoj\Yaah\Constants\SaleFormats;
 use Radowoj\Yaah\Constants\ShippingPaidBy;
-use Radowoj\Yaah\Decorators\MTGAuctionDecorator;
+use Radowoj\Yaah\Decorators\MTGRedAuctionDecorator;
 use Radowoj\Yaah\HelperFactory\Factory;
 
 $helper = (new Factory())->create([
@@ -89,7 +89,7 @@ $helper = (new Factory())->create([
     'isSandbox'     => 'true-if-you-intend-to-use-sandbox'
 ]);
 
-$mtgAuction = new MTGAuctionDecorator(new Auction());
+$mtgAuction = new MTGRedAuctionDecorator(new Auction());
 $mtgAuction->fromArray([
     'title' => 'Allegro test auction',
     'description' => 'Test auction description',
