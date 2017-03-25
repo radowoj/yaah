@@ -112,4 +112,44 @@ class MTGAuctionDecoratorTest extends TestCase
     }
 
 
+    public function testToApiRepresentation()
+    {
+        $expectedResult = [
+            'whatever' => 'just testing if it is forwarded correctly'
+        ];
+
+        $auction = $this->getMockBuilder(Auction::class)
+            ->setMethods(['toApiRepresentation'])
+            ->getMock();
+
+        $auction->expects($this->once())
+            ->method('toApiRepresentation')
+            ->willReturn($expectedResult);
+
+        $decorator = new MTGAuctionDecorator($auction);
+        $result = $decorator->toApiRepresentation();
+        $this->assertSame($expectedResult, $result);
+    }
+
+
+    public function testFromApiRepresentation()
+    {
+        $expectedArgument = [
+            'whatever' => 'just testing if it is forwarded correctly'
+        ];
+
+        $auction = $this->getMockBuilder(Auction::class)
+            ->setMethods(['fromApiRepresentation'])
+            ->getMock();
+
+        $auction->expects($this->once())
+            ->method('fromApiRepresentation')
+            ->with($this->equalTo($expectedArgument));
+
+
+        $decorator = new MTGAuctionDecorator($auction);
+        $result = $decorator->fromApiRepresentation($expectedArgument);
+    }
+
+
 }
