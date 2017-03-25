@@ -6,8 +6,6 @@ use Radowoj\Yaah\Constants\AuctionFids;
 
 class MTGRedAuctionDecorator extends AuctionArrayMapDecorator
 {
-    const ID_ALLEGRO_CATEGORY = 6092;
-
     const FID_CONDITION = 20626;
 
     protected $map = [
