@@ -15,10 +15,11 @@ abstract class AuctionArrayMapDecorator implements AuctionInterface
 
     protected $auction = null;
 
-    protected $map = [
-        //human readable key => Allegro WebAPI FID
-    ];
-
+    /**
+     * This function should return array of mappings (human readable key => Allegro WebAPI FID)
+     * @return array
+     */
+    abstract protected function getMap();
 
     public function __construct(AuctionInterface $auction)
     {
@@ -28,10 +29,11 @@ abstract class AuctionArrayMapDecorator implements AuctionInterface
 
     public function fromArray(array $humanReadableArray)
     {
+        $map = $this->getMap();
         $fields = [];
         foreach($humanReadableArray as $key => $value) {
-            if (array_key_exists($key, $this->map)) {
-                $fields[$this->map[$key]] = $value;
+            if (array_key_exists($key, $map)) {
+                $fields[$map[$key]] = $value;
             }
         }
         $this->auction->fromArray($fields);
@@ -40,8 +42,9 @@ abstract class AuctionArrayMapDecorator implements AuctionInterface
 
     public function toArray()
     {
+        $map = $this->getMap();
         $fields = $this->auction->toArray();
-        $flippedMap = array_flip($this->map);
+        $flippedMap = array_flip($map);
         $humanReadableArray = [];
 
         foreach($fields as $key => $value) {
