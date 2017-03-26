@@ -6,12 +6,17 @@ use PHPUnit\Framework\TestCase;
 use Radowoj\Yaah\Auction;
 use Radowoj\Yaah\Decorators\AuctionArrayMapDecorator;
 use Radowoj\Yaah\Constants\AuctionTimespans;
+use Radowoj\Yaah\Constants\AuctionFids;
 use Radowoj\Yaah\Constants\Conditions;
 use Radowoj\Yaah\Constants\SaleFormats;
 use Radowoj\Yaah\Constants\ShippingPaidBy;
 
 class AuctionArrayMapDecoratorTest extends TestCase
 {
+
+    const CORRECT_CATEGORY = 6092;
+
+    const INCORRECT_CATEGORY = 42;
 
 
     protected function getTestPhotoArray()
@@ -27,7 +32,7 @@ class AuctionArrayMapDecoratorTest extends TestCase
         return [
             'title' => 'Allegro test auction',
             'description' => 'Test auction description',
-            'category' => 6092,
+            'category' => self::CORRECT_CATEGORY,
             'timespan' => AuctionTimespans::TIMESPAN_3_DAYS,
             'quantity' => 100,
             'country' => 1,
@@ -48,7 +53,7 @@ class AuctionArrayMapDecoratorTest extends TestCase
         return [
             1 => 'Allegro test auction',
             24 => 'Test auction description',
-            2 => 6092,
+            2 => self::CORRECT_CATEGORY,
             4 => 0,
             5 => 100,
             9 => 1,
@@ -188,6 +193,90 @@ class AuctionArrayMapDecoratorTest extends TestCase
 
         $decorator = $this->getDecorator($auction);
         $result = $decorator->fromApiRepresentation($expectedArgument);
+    }
+
+
+    public function testDefaultCategoryFromArray()
+    {
+        $auction = $this->getMockBuilder(Auction::class)
+            ->setMethods(['fromArray'])
+            ->getMock();
+
+        $auction->expects($this->once())
+            ->method('fromArray')
+            ->with([AuctionFids::FID_CATEGORY => self::CORRECT_CATEGORY])
+            ->willReturn(null);
+
+        $decorator = $this->getDecorator($auction);
+        $decorator->expects($this->any())
+            ->method('getIdCategory')
+            ->willReturn(self::CORRECT_CATEGORY);
+
+        $decorator->fromArray([]);
+    }
+
+
+    public function testDefaultCategoryToArray()
+    {
+        $auction = $this->getMockBuilder(Auction::class)
+            ->setMethods(['toArray'])
+            ->getMock();
+
+        $auction->expects($this->once())
+            ->method('toArray')
+            ->with()
+            ->willReturn([]);
+
+        $decorator = $this->getDecorator($auction);
+        $decorator->expects($this->any())
+            ->method('getIdCategory')
+            ->willReturn(self::CORRECT_CATEGORY);
+
+        $this->assertEquals(['category' => self::CORRECT_CATEGORY], $decorator->toArray());
+    }
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Invalid category.
+     */
+    public function testExceptionOnIncorrectCategoryFromArray()
+    {
+        $auction = $this->getMockBuilder(Auction::class)
+            ->getMock();
+
+        $decorator = $this->getDecorator($auction);
+        $decorator->expects($this->any())
+            ->method('getIdCategory')
+            ->willReturn(self::CORRECT_CATEGORY);
+
+        $decorator->fromArray([
+            'category' => self::INCORRECT_CATEGORY
+        ]);
+    }
+
+
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Invalid category.
+     */
+    public function testExceptionOnIncorrectCategoryToArray()
+    {
+        $auction = $this->getMockBuilder(Auction::class)
+            ->setMethods(['toArray'])
+            ->getMock();
+
+        $auction->expects($this->once())
+            ->method('toArray')
+            ->willReturn([
+                AuctionFids::FID_CATEGORY => self::INCORRECT_CATEGORY
+            ]);
+
+        $decorator = $this->getDecorator($auction);
+        $decorator->expects($this->any())
+            ->method('getIdCategory')
+            ->willReturn(self::CORRECT_CATEGORY);
+
+        $decorator->toArray();
     }
 
 }
