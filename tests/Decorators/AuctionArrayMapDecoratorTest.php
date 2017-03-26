@@ -4,13 +4,13 @@ namespace Radowoj\Yaah\Decorators;
 
 use PHPUnit\Framework\TestCase;
 use Radowoj\Yaah\Auction;
-use Radowoj\Yaah\Decorators\MTGRedAuctionDecorator;
+use Radowoj\Yaah\Decorators\AuctionArrayMapDecorator;
 use Radowoj\Yaah\Constants\AuctionTimespans;
 use Radowoj\Yaah\Constants\Conditions;
 use Radowoj\Yaah\Constants\SaleFormats;
 use Radowoj\Yaah\Constants\ShippingPaidBy;
 
-class MTGRedAuctionDecoratorTest extends TestCase
+class AuctionArrayMapDecoratorTest extends TestCase
 {
 
 
@@ -61,7 +61,43 @@ class MTGRedAuctionDecoratorTest extends TestCase
             12 => 1,
             38 => 12,
         ];
+    }
 
+
+    protected function getTestMap()
+    {
+        return [
+            'title' => 1,
+            'description' => 24,
+            'category' => 2,
+            'timespan' => 4,
+            'quantity' => 5,
+            'country' => 9,
+            'region' => 10,
+            'city' => 11,
+            'postcode' => 32,
+            'condition' => 20626,
+            'sale_format' => 29,
+            'buy_now_price' => 8,
+            'shipping_paid_by' => 12,
+            'post_package_priority_price' => 38,
+        ];
+    }
+
+
+    protected function getDecorator(Auction $auction)
+    {
+        $decorator = $this->getMockForAbstractClass(AuctionArrayMapDecorator::class, [
+            $auction
+        ]);
+
+        $decorator->expects($this->any())
+            ->method('getMap')
+            ->willReturn(
+                $this->getTestMap()
+            );
+
+        return $decorator;
     }
 
 
@@ -75,7 +111,8 @@ class MTGRedAuctionDecoratorTest extends TestCase
             ->method('fromArray')
             ->with($this->getTestFidArray())
             ->willReturn(null);
-        $decorator = new MTGRedAuctionDecorator($auction);
+
+        $decorator = $this->getDecorator($auction);
 
         $decorator->fromArray($this->getTestArray());
     }
@@ -90,10 +127,12 @@ class MTGRedAuctionDecoratorTest extends TestCase
         $auction->expects($this->once())
             ->method('toArray')
             ->willReturn($this->getTestFidArray());
-        $decorator = new MTGRedAuctionDecorator($auction);
+
+        $decorator = $this->getDecorator($auction);
 
         $this->assertSame($this->getTestArray(), $decorator->toArray());
     }
+
 
 
     public function testSetPhotos()
@@ -107,7 +146,7 @@ class MTGRedAuctionDecoratorTest extends TestCase
             ->with($this->getTestPhotoArray())
             ->willReturn(null);
 
-        $decorator = new MTGRedAuctionDecorator($auction);
+        $decorator = $this->getDecorator($auction);
         $decorator->setPhotos($this->getTestPhotoArray());
     }
 
@@ -126,7 +165,7 @@ class MTGRedAuctionDecoratorTest extends TestCase
             ->method('toApiRepresentation')
             ->willReturn($expectedResult);
 
-        $decorator = new MTGRedAuctionDecorator($auction);
+        $decorator = $this->getDecorator($auction);
         $result = $decorator->toApiRepresentation();
         $this->assertSame($expectedResult, $result);
     }
@@ -147,9 +186,8 @@ class MTGRedAuctionDecoratorTest extends TestCase
             ->with($this->equalTo($expectedArgument));
 
 
-        $decorator = new MTGRedAuctionDecorator($auction);
+        $decorator = $this->getDecorator($auction);
         $result = $decorator->fromApiRepresentation($expectedArgument);
     }
-
 
 }
