@@ -5,6 +5,9 @@ namespace Radowoj\Yaah;
 use Radowoj\Yaah\Constants\AuctionFids;
 use InvalidArgumentException;
 
+/**
+ * Representation of Allegro Auction (with form field values), used by Helper class to create an auction or retrieve its data.
+ */
 class Auction implements AuctionInterface
 {
     const MAX_PHOTOS = 8;
@@ -35,6 +38,11 @@ class Auction implements AuctionInterface
     }
 
 
+    /**
+     * Populate from array
+     * @param  array $fields (WebAPI fid => field value)
+     * @see Radowoj\Yaah\Decorators\AuctionArrayMapDecorator for an interface more friendly to programmer's sanity :)
+     */
     public function fromArray(array $fields)
     {
         $this->fields = $fields;
@@ -42,7 +50,7 @@ class Auction implements AuctionInterface
 
 
     /**
-     * Returns WebAPI's representation of an auction (array of fields)
+     * Returns WebAPI's representation of an auction (array of fields for doNewAuctionExt())
      * @return array
      */
     public function toApiRepresentation()
@@ -62,7 +70,7 @@ class Auction implements AuctionInterface
 
 
     /**
-     * Creates an auction from WebAPI's representation (array of fields)
+     * Creates an auction from WebAPI's representation (array of fields from doGetItemFields)
      * @param  array  $fields
      */
     public function fromApiRepresentation(array $fields)
