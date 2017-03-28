@@ -9,6 +9,8 @@ use InvalidArgumentException;
  */
 class Field
 {
+    const DATE_REGEX = '/^\d{2}\-\d{2}\-\d{4}$/';
+
     const VALUE_STRING = 'fvalueString';
     const VALUE_INT = 'fvalueInt';
     const VALUE_FLOAT = 'fvalueFloat';
@@ -134,7 +136,7 @@ class Field
      */
     protected function setValueStringAutodetect($value)
     {
-        if (preg_match('/^\d{2}\-\d{2}\-\d{4}$/', $value)) {
+        if (preg_match(self::DATE_REGEX, $value)) {
             $this->fValues[self::VALUE_DATE] = $value;
         } else {
             $this->fValues[self::VALUE_STRING] = $value;
@@ -155,19 +157,57 @@ class Field
         //make sure array has numeric keys
         $range = array_values($range);
 
-        asort($range);
-
         if ($this->isRangeFloat($range)) {
-            $this->fValues[self::VALUE_RANGE_FLOAT] = array_combine(
-                ['fvalueRangeFloatMin', 'fvalueRangeFloatMax'],
-                $range
-            );
+            $this->setRangeFloat($range);
         } elseif ($this->isRangeInt($range)) {
-            $this->fValues[self::VALUE_RANGE_INT] = array_combine(
-                ['fvalueRangeIntMin', 'fvalueRangeIntMax'],
-                $range
-            );
+            $this->setRangeInt($range);
+        } elseif ($this->isRangeDate($range)) {
+            $this->setRangeDate($range);
         }
+    }
+
+
+    /**
+     * Sets float range values from given array
+     * @param array $range array of two float values
+     */
+    protected function setRangeFloat(array $range)
+    {
+        asort($range);
+        $this->fValues[self::VALUE_RANGE_FLOAT] = array_combine(
+            ['fvalueRangeFloatMin', 'fvalueRangeFloatMax'],
+            $range
+        );
+    }
+
+
+    /**
+     * Sets int range values from given array
+     * @param array $range array of two int values
+     */
+    protected function setRangeInt(array $range)
+    {
+        asort($range);
+        $this->fValues[self::VALUE_RANGE_INT] = array_combine(
+            ['fvalueRangeIntMin', 'fvalueRangeIntMax'],
+            $range
+        );
+    }
+
+
+    /**
+     * Sets date range values from given array
+     * @param array $range array of two date values
+     */
+    protected function setRangeDate(array $range)
+    {
+        usort($range, function($date1, $date2){
+            return strtotime($date1) - strtotime($date2);
+        });
+        $this->fValues[self::VALUE_RANGE_DATE] = array_combine(
+            ['fvalueRangeDateMin', 'fvalueRangeDateMax'],
+            $range
+        );
     }
 
 
@@ -192,6 +232,21 @@ class Field
     {
         $ints = array_filter($range, 'is_int');
         return (count($ints) == 2);
+    }
+
+
+    /**
+     * Checks if given range is date
+     * @param  array   $range range to check
+     * @return boolean
+     */
+    public function isRangeDate(array $range)
+    {
+        $dates = array_filter($range, function($item){
+            return preg_match(self::DATE_REGEX, $item);
+        });
+
+        return (count($dates) == 2);
     }
 
 
@@ -244,6 +299,7 @@ class Field
             $this->fValues[$key] = $value;
         }
     }
+
 
     /**
      * Return field fid
