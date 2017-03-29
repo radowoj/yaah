@@ -9,10 +9,10 @@ use Radowoj\Yaah\DebugSoapClient;
 
 class DebugFactory extends HelperFactory
 {
-    public function getSoapClient()
+    protected function getSoapClient()
     {
         return new DebugSoapClient(
-            $this->getConfig()->getIsSandbox()
+            $this->config->getIsSandbox()
                 ? Wsdl::WSDL_SANDBOX
                 : Wsdl::WSDL_PRODUCTION,
             ['log_file' => 'php://stdout']

@@ -9,10 +9,10 @@ use Radowoj\Yaah\Constants\Wsdl;
 
 class Factory extends HelperFactory
 {
-    public function getSoapClient()
+    protected function getSoapClient()
     {
         return new SoapClient(
-            $this->getConfig()->getIsSandbox()
+            $this->config->getIsSandbox()
                 ? Wsdl::WSDL_SANDBOX
                 : Wsdl::WSDL_PRODUCTION
         );

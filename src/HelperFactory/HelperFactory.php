@@ -13,25 +13,11 @@ abstract class HelperFactory
 
     abstract protected function getSoapClient();
 
-    protected function setConfig($configArray)
-    {
-        $this->config = new Config($configArray);
-    }
-
-    protected function getConfig()
-    {
-        if (is_null($this->config)) {
-            throw new Exception('Config object has not been set');
-        }
-
-        return $this->config;
-    }
-
     public function create(array $configArray)
     {
-        $this->setConfig($configArray);
-        $soapClient = $this->getSoapClient($this->getConfig());
-        $apiClient = new Client($this->getConfig(), $soapClient);
+        $this->config = new Config($configArray);
+        $soapClient = $this->getSoapClient($this->config);
+        $apiClient = new Client($this->config, $soapClient);
         return new Helper($apiClient);
     }
 
