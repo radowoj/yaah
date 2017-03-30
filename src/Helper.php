@@ -3,6 +3,7 @@
 namespace Radowoj\Yaah;
 
 use Radowoj\Yaah\Constants\SellFormOpts;
+use Radowoj\Yaah\Journal\Deal;
 
 class Helper
 {
@@ -117,11 +118,13 @@ class Helper
      * @param  integer $journalStart start point (dealEventId)
      * @return array
      */
-    public function getSiteJournalDeals($journalStart)
+    public function getSiteJournalDeals($journalStart = 0)
     {
         $response = $this->client->doGetSiteJournalDeals(['journalStart' => $journalStart]);
         if (isset($response->siteJournalDeals->item)) {
-            return $response->siteJournalDeals->item;
+            return array_map(function($deal){
+                return new Deal($deal);
+            }, $response->siteJournalDeals->item);
         }
 
         throw new Exception("Unable to get site journal deals: " . print_r($response, 1));
