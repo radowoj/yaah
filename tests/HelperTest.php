@@ -304,6 +304,7 @@ class HelperTest extends TestCase
         $helper->getFieldsByCategory(42);
     }
 
+
     public function testGetFieldsByCategory()
     {
         $apiClient = $this->getMockBuilder(Client::class)
@@ -356,7 +357,80 @@ class HelperTest extends TestCase
             ],
 
         ], $result);
+    }
 
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Unable to get site journal deals
+     */
+    public function testGetSiteJournalDealsExceptionOnFailure()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $helper = new Helper($apiClient);
+
+        $helper->getSiteJournalDeals();
+    }
+
+
+
+    public function testGetSiteJournalDealsWithDefaultParams()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['doGetSiteJournalDeals'])
+            ->getMock();
+
+        $apiClient->expects($this->once())
+            ->method('doGetSiteJournalDeals')
+            ->with($this->equalTo([
+                'journalStart' => 0,
+            ]))
+            ->willReturn((object)[
+                'siteJournalDeals' => (object)[
+                    'item' => [
+                        (object)[
+                            'dealEventId' => 42
+                        ]
+                    ]
+                ]
+            ]);
+
+        $helper = new Helper($apiClient);
+        $deals = $helper->getSiteJournalDeals();
+
+        $this->assertContainsOnly('Radowoj\Yaah\Journal\Deal', $deals);
+    }
+
+
+    public function testGetSiteJournalDealsWithNonzeroStart()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['doGetSiteJournalDeals'])
+            ->getMock();
+
+        $apiClient->expects($this->once())
+            ->method('doGetSiteJournalDeals')
+            ->with($this->equalTo([
+                'journalStart' => 71830,
+            ]))
+            ->willReturn((object)[
+                'siteJournalDeals' => (object)[
+                    'item' => [
+                        (object)[
+                            'dealEventId' => 42
+                        ]
+                    ]
+                ]
+            ]);
+
+        $helper = new Helper($apiClient);
+        $deals = $helper->getSiteJournalDeals(71830);
+
+        $this->assertContainsOnly('Radowoj\Yaah\Journal\Deal', $deals);
     }
 
 
