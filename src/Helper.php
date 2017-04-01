@@ -138,13 +138,13 @@ class Helper
     public function getAuctionByItemId($itemId)
     {
         $response =  $this->client->doGetItemFields(['itemId' => $itemId]);
-        if (isset($response->itemFields->item)) {
-            $auction = new Auction();
-            $auction->fromApiRepresentation($response->itemFields->item);
-            return $auction;
+        if (!isset($response->itemFields->item)) {
+            throw new Exception('Invalid WebAPI response: ' . print_r($response, 1));
         }
 
-        return null;
+        $auction = new Auction();
+        $auction->fromApiRepresentation($response->itemFields->item);
+        return $auction;
     }
 
 

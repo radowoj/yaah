@@ -18,6 +18,9 @@ class FactoryTest extends TestCase
 
     /**
      * @dataProvider providerFactoryClass
+     * @covers Radowoj\Yaah\HelperFactory\Factory
+     * @covers Radowoj\Yaah\HelperFactory\DebugFactory
+     * @covers Radowoj\Yaah\HelperFactory\HelperFactory
      */
     public function testFactoryReturnsHelper($factoryClass)
     {

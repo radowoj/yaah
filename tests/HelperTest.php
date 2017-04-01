@@ -434,6 +434,53 @@ class HelperTest extends TestCase
     }
 
 
+    /**
+     * @expectedException Radowoj\Yaah\Exception
+     * @expectedExceptionMessage Invalid WebAPI response: stdClass Object
+     */
+    public function testGetAuctionByItemIdExceptionOnInvalidResponse()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['doGetItemFields'])
+            ->getMock();
 
+        $apiClient->expects($this->once())
+            ->method('doGetItemFields')
+            ->with($this->equalTo([
+                'itemId' => 4321,
+            ]))
+            ->willReturn((object)[]);
+
+        $helper = new Helper($apiClient);
+        $helper->getAuctionByItemId(4321);
+    }
+
+
+    public function testGetAuctionByItem()
+    {
+        $apiClient = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['doGetItemFields'])
+            ->getMock();
+
+        $apiClient->expects($this->once())
+            ->method('doGetItemFields')
+            ->with($this->equalTo([
+                'itemId' => 4321,
+            ]))
+            ->willReturn((object)[
+                'itemFields' => (object)[
+                    'item' => [
+                        //no fields returned - mapping from fields to auction tested separately
+                    ]
+                ]
+            ]);
+
+        $helper = new Helper($apiClient);
+        $auction = $helper->getAuctionByItemId(4321);
+
+        $this->assertInstanceOf('Radowoj\Yaah\Auction', $auction);
+    }
 
 }
