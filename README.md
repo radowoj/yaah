@@ -7,7 +7,7 @@ Simple client library for Allegro WebAPI.
 ## Goals
 
 * Simplify basic auction operations (creating new auction, finishing, changing item quantity, retrieving log etc) - Helper class.
-* Avoid the necessity of sending defaults for every value type of every required field (fvalueString, fvalueInt, fvalueDate, fvalueAndSoOn...) - Auction class and its decorators.
+* Avoid the necessity of sending defaults for every value type of [every required field](http://allegro.pl/webapi/documentation.php/show/id,113#method-input) (fvalueString, fvalueInt, fvalueDate, fvalueAndSoOn...) - Auction class and [its decorators](https://github.com/radowoj/yaah-mtg).
 
 ## Installation
 
@@ -19,7 +19,7 @@ $ composer require radowoj/yaah
 
 ## Example 1 - new auction
 
-For a more programmer-friendly Auction interface, see radowoj/yaah-mtg.
+For an example of a more programmer-friendly Auction interface, see [yaah-mtg](https://github.com/radowoj/yaah-mtg)
 
 ```php
 use Radowoj\Yaah\Auction;
