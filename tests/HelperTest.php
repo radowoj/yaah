@@ -223,7 +223,7 @@ class HelperTest extends TestCase
 
         $helper = new Helper($apiClient);
 
-        $result = $helper->finishAuctions($auctionIds, $finishCancelAllBids, $finishCancelReason);
+        $helper->finishAuctions($auctionIds, $finishCancelAllBids, $finishCancelReason);
     }
 
     /**
@@ -250,7 +250,7 @@ class HelperTest extends TestCase
 
         $helper = new Helper($apiClient);
 
-        $result = $helper->finishAuction(31337, $finishCancelAllBids, $finishCancelReason);
+        $helper->finishAuction(31337, $finishCancelAllBids, $finishCancelReason);
     }
 
 
@@ -375,37 +375,19 @@ class HelperTest extends TestCase
     }
 
 
-
-    public function testGetSiteJournalDealsWithDefaultParams()
+    public function providerGetSiteJournalDealsStartParam()
     {
-        $apiClient = $this->getMockBuilder(Client::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['doGetSiteJournalDeals'])
-            ->getMock();
-
-        $apiClient->expects($this->once())
-            ->method('doGetSiteJournalDeals')
-            ->with($this->equalTo([
-                'journalStart' => 0,
-            ]))
-            ->willReturn((object)[
-                'siteJournalDeals' => (object)[
-                    'item' => [
-                        (object)[
-                            'dealEventId' => 42
-                        ]
-                    ]
-                ]
-            ]);
-
-        $helper = new Helper($apiClient);
-        $deals = $helper->getSiteJournalDeals();
-
-        $this->assertContainsOnly('Radowoj\Yaah\Journal\Deal', $deals);
+        return [
+            [0],
+            [71830]
+        ];
     }
 
 
-    public function testGetSiteJournalDealsWithNonzeroStart()
+    /**
+     * @dataProvider providerGetSiteJournalDealsStartParam
+     */
+    public function testGetSiteJournalDealsWithDefaultParams($journalStart)
     {
         $apiClient = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
@@ -415,7 +397,7 @@ class HelperTest extends TestCase
         $apiClient->expects($this->once())
             ->method('doGetSiteJournalDeals')
             ->with($this->equalTo([
-                'journalStart' => 71830,
+                'journalStart' => $journalStart,
             ]))
             ->willReturn((object)[
                 'siteJournalDeals' => (object)[
@@ -428,7 +410,13 @@ class HelperTest extends TestCase
             ]);
 
         $helper = new Helper($apiClient);
-        $deals = $helper->getSiteJournalDeals(71830);
+
+        if ($journalStart !== 0) {
+            $deals = $helper->getSiteJournalDeals($journalStart);
+        } else {
+            //test default param, which should be 0
+            $deals = $helper->getSiteJournalDeals();
+        }
 
         $this->assertContainsOnly('Radowoj\Yaah\Journal\Deal', $deals);
     }
