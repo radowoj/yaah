@@ -54,7 +54,7 @@ class Helper
         $auctionArray = $auction->toApiRepresentation();
         $auctionArray['localId'] = $localId;
 
-        $resultNewAuction = $this->client->doNewAuctionExt($auctionArray);
+        $this->client->doNewAuctionExt($auctionArray);
         $resultVerify = $this->client->doVerifyItem(['localId' => $localId]);
 
         if (!is_object($resultVerify) || !isset($resultVerify->itemId)) {

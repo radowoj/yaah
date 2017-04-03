@@ -216,7 +216,7 @@ class FieldTest extends TestCase
      */
     public function testExceptionOnInvalidValue()
     {
-        $field = new Field(1, (object)['foo' => 'bar']);
+        new Field(1, (object)['foo' => 'bar']);
     }
 
 
@@ -226,7 +226,7 @@ class FieldTest extends TestCase
      */
     public function testExceptionOnInvalidForcedValue()
     {
-        $field = new Field(1, 'something', 'fvalueUnicorn');
+        new Field(1, 'something', 'fvalueUnicorn');
     }
 
 

@@ -6,6 +6,7 @@ use InvalidArgumentException;
 
 /**
  * Class representation of WebAPI auction field
+ * @see http://allegro.pl/webapi/documentation.php/show/id,113
  */
 class Field
 {
@@ -146,7 +147,7 @@ class Field
 
     /**
      * Detect type of range passed as argument (int, float, date)
-     * @param array $value value to detect type of
+     * @param array $range range to detect type of
      */
     protected function setValueRangeAutodetect(array $range)
     {

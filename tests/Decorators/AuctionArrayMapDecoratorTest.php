@@ -192,7 +192,7 @@ class AuctionArrayMapDecoratorTest extends TestCase
 
 
         $decorator = $this->getDecorator($auction);
-        $result = $decorator->fromApiRepresentation($expectedArgument);
+        $decorator->fromApiRepresentation($expectedArgument);
     }
 
 

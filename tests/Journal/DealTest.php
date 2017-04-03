@@ -63,7 +63,7 @@ class DealTest extends TestCase
      */
     public function testExceptionOnNonDealProperty()
     {
-        $deal = new Deal((object)['romanes' => 'eunt domus']);
+        new Deal((object)['romanes' => 'eunt domus']);
     }
 
 
@@ -73,7 +73,7 @@ class DealTest extends TestCase
      */
     public function testExceptionOnInvalidDealProperty()
     {
-        $deal = new Deal((object)['dealer' => 'Pinkman']);
+        new Deal((object)['dealer' => 'Pinkman']);
     }
 
 

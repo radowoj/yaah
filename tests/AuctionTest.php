@@ -163,7 +163,7 @@ class AuctionTest extends TestCase
             __DIR__ . '/i.am.not.a.photo.file.txt'
         ]);
 
-        $apiRepresentation = $auction->toApiRepresentation();
+        $auction->toApiRepresentation();
     }
 
 
