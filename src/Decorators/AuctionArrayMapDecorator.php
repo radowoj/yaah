@@ -39,6 +39,12 @@ abstract class AuctionArrayMapDecorator implements AuctionInterface
     }
 
 
+    /**
+     * Makes sure that if a concrete class represents specific category, category id passed in fields array is correct:
+     * - set it as default, if none was provided
+     * - throw an exception, if some other category id was provided in $fields
+     * @param  array  $fields (reference) fields array to check
+     */
     protected function forceCategory(array& $fields)
     {
         //no category defined in concrete class - do nothing;
@@ -59,57 +65,77 @@ abstract class AuctionArrayMapDecorator implements AuctionInterface
     }
 
 
-    public function fromArray(array $humanReadableArray)
+    /**
+     * Remap field keys using given map
+     * @param  array   $array to remap
+     * @param  array   $map   to remap with
+     * @return array remapped array
+     */
+    protected function remap(array $array, array $map)
     {
-        $map = $this->getMap();
-        $fields = [];
-        foreach($humanReadableArray as $key => $value) {
+        $result = [];
+
+        foreach($array as $key => $value) {
             if (array_key_exists($key, $map)) {
-                $fields[$map[$key]] = $value;
+                $result[$map[$key]] = $value;
             }
         }
 
-        $this->forceCategory($fields);
+        return $result;
+    }
 
+    /**
+     * @see Radowoj\Yaah\Auction::fromArray()
+     * @param  array   $humanReadableArray with human readable keys
+     */
+    public function fromArray(array $humanReadableArray)
+    {
+        $map = $this->getMap();
+        $fields = $this->remap($humanReadableArray, $map);
+        $this->forceCategory($fields);
         $this->auction->fromArray($fields);
     }
 
 
+    /**
+     * @see Radowoj\Yaah\Auction::toArray()
+     * @return array with human readable keys
+     */
     public function toArray()
     {
         $map = $this->getMap();
         $fields = $this->auction->toArray();
-
         $this->forceCategory($fields);
-
         $flippedMap = array_flip($map);
-        $humanReadableArray = [];
-
-        foreach($fields as $key => $value) {
-            if (array_key_exists($key, $flippedMap)) {
-                $humanReadableArray[$flippedMap[$key]] = $value;
-            }
-        }
-
-        return $humanReadableArray;
+        return $this->remap($fields, $flippedMap);
     }
 
 
+    /**
+     * @see Radowoj\Yaah\Auction::toApiRepresentation()
+     */
     public function toApiRepresentation()
     {
         return $this->auction->toApiRepresentation();
     }
 
+
+    /**
+     * @see Radowoj\Yaah\Auction::fromApiRepresentation()
+     */
     public function fromApiRepresentation(array $fields)
     {
         $this->auction->fromApiRepresentation($fields);
     }
 
+
+    /**
+     * @see Radowoj\Yaah\Auction::setPhotos()
+     */
     public function setPhotos(array $photos)
     {
         $this->auction->setPhotos($photos);
     }
-
 
 
 }
