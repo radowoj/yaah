@@ -40,7 +40,7 @@ class DebugSoapClient extends SoapClient
     {
         $response = parent::__call($functionName, $arguments);
 
-        $this->log("Date: " . date('Y-m-d H:i:s');
+        $this->log("Date: " . date('Y-m-d H:i:s'));
         $this->log("Request {$functionName}: \n{$this->__getLastRequest()}\n");
         $this->log("Response {$functionName}: \n{$this->__getLastResponse()}\n");
 
