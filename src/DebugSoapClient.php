@@ -19,10 +19,10 @@ class DebugSoapClient extends SoapClient
     public function __construct($wsdl, array $options = [])
     {
         if (!array_key_exists('log_file', $options)) {
-            throw new Exception("Debug soap client requires a log file path provided as {$options['log_file']} to work");
+            throw new Exception("Debug soap client requires a log file path provided as \$options['log_file'] to work");
         }
 
-        $this->logFile = fopen($options['log_file'], "w+");
+        $this->logFile = fopen($options['log_file'], "a");
 
         $options['trace'] = 1;
 
@@ -40,8 +40,9 @@ class DebugSoapClient extends SoapClient
     {
         $response = parent::__call($functionName, $arguments);
 
-        $this->log("Request {$functionName}: \n{$this->__getLastRequest()}\n\n");
-        $this->log("Response {$functionName}: \n{$this->__getLastResponse()}\n\n");
+        $this->log("Date: " . date('Y-m-d H:i:s');
+        $this->log("Request {$functionName}: \n{$this->__getLastRequest()}\n");
+        $this->log("Response {$functionName}: \n{$this->__getLastResponse()}\n");
 
         return $response;
     }
