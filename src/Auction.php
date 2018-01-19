@@ -117,7 +117,7 @@ class Auction implements AuctionInterface
     {
         $fields = $this->fields;
         $this->addPhotoFields($fields);
-        return $this->fields;
+        return $fields;
     }
 
 }
